@@ -1,4 +1,5 @@
 import sys
 from src.hello.HelloWorld import HelloWorld
+from src.cryptogram.Main import Main
 print("In /src/__main__.py")
-HelloWorld.main(sys.argv)
+Main.main(sys.argv)
