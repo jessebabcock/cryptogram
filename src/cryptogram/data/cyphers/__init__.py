@@ -1,4 +1,4 @@
-"""cryptogram Package.
+"""cryptogram/data/cyphers Package.
 
 This is the __init__ file for this package.
 

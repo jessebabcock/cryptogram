@@ -1,4 +1,4 @@
-"""cryptogram Package.
+"""cryptogram/gui Package.
 
 This is the __init__ file for this package.
 
