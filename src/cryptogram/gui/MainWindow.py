@@ -31,15 +31,15 @@ class MainWindow(tk.Tk):
         self.columns = 4
         self.font = ("Arial", 15)
 
-        self.grid_rowconfigure(0, weight=20)
-        self.grid_rowconfigure(1, weight=2)
+        self.grid_rowconfigure(0, weight=10)
+        self.grid_rowconfigure(1, weight=5)
         self.grid_rowconfigure(2, weight=1)
         self.grid_rowconfigure(3, weight=1)
         for i in range(self.columns):
             self.grid_columnconfigure(i, weight=1)
 
-        self.__main = None
-        self.load_image_panel()
+        self.__image_panel: tk.Widget = ImagePanel(self)
+        self.__image_panel.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
 
         self.__cypher_bar = CypherPanel(self)
         self.__cypher_bar.grid(row=1, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
@@ -50,17 +50,34 @@ class MainWindow(tk.Tk):
         self._keyphrase = tk.Entry(master=self, font=self.font)
         self._keyphrase.grid(row=2, column=1, padx=10, sticky="WE", columnspan=self.columns - 1)
 
-        cancel_button: tk.Button = tk.Button(master=self, text="Cancel",
+        load_button: tk.Button = tk.Button(master=self, text="Load",
                                              command=lambda:
-                                             self.action_performed("cancel"),
+                                             self.action_performed("load"),
                                              font=self.font)
-        cancel_button.grid(**self._grid_dict(3, 0, "NWSE"), columnspan=self.columns // 2)
+        load_button.grid(**self._grid_dict(3, 0, "NEWS"), columnspan=2)
 
         save_button: tk.Button = tk.Button(master=self, text="Save",
                                            command=lambda:
                                            self.action_performed("save"),
                                            font=self.font)
-        save_button.grid(**self._grid_dict(3, self.columns // 2, "NSWE"), columnspan=self.columns // 2)
+        save_button.grid(**self._grid_dict(3, 2, "NWES"), columnspan=2)
+
+    def action_performed(self, text: str) -> None:
+        """Actions when a button is pressed.
+
+        Args:
+            text: String the box has
+            that was clicked
+
+        Returns:
+            None
+        """
+        if text == "load":
+            self.__image_panel.load_image()
+        elif text == "save":
+            pass
+        else:
+            raise ValueError("Something bad happened in MainWindow")
 
     def load_image_panel(self) -> None:
         """Loads the main menu panel.

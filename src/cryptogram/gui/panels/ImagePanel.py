@@ -7,6 +7,8 @@ Version: 0.1
 """
 
 import tkinter as tk
+from tkinter import filedialog
+from PIL import Image, ImageTk
 from typing import Mapping, Dict, Union
 # mypy: ignore-errors
 
@@ -28,9 +30,11 @@ class ImagePanel(tk.Frame):
         tk.Frame.__init__(self, master=self.__master)
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
+        self.__image = ImageTk.PhotoImage(Image.open("/home/codio/workspace/python/src/resources/test.jpeg"))
 
-        self.__place_holder = tk.Label(master=self, text="Placeholder", borderwidth=3, relief="solid")
-        self.__place_holder.grid(**self._grid_dict(0, 0, "NSEW"))
+        self.__image_display = tk.Label(master=self, text="Placeholder", borderwidth=3, relief="solid")
+        self.__image_display.grid(**self._grid_dict(0, 0, "NSEW"))
+        self.display_image(self.__image)
 
     def action_performed(self, text: str) -> None:
         """Actions when a button is pressed.
@@ -43,6 +47,15 @@ class ImagePanel(tk.Frame):
             None
         """
         print(text)
+
+    def display_image(self, image):
+        self.__image_display.config(image=image)
+        self.__image_display.image = image
+    
+    def load_image(self):
+        file_name = filedialog.askopenfilename(title='Open a file', initialdir='/home/codio/workspace/python/src/resources')
+        new_image = ImageTk.PhotoImage(Image.open(file_name))
+        self.display_image(new_image)
         
     def _grid_dict(self,
                    row: int,
