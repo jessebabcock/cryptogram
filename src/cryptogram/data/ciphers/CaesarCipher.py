@@ -13,12 +13,13 @@ from typing import List, Optional
 class CaesarCipher(Cipher):
     """Interface for ciphers."""
 
-    def __init__(self, phrase: str, shift_amount: int) -> None:
+    def __init__(self, phrase: str, image, shift_amount: int) -> None:
         self.__name: str = "Ceasar Cipher"
         self.__previous_cipher: Optional[Cipher] = None
         self.__next_cipher: Optional[Cipher] = None
         self.__shift_amount: int = shift_amount
         self.__phrase: str = phrase
+        self.__image = image
 
     @property
     def name(self) -> str:
@@ -65,7 +66,7 @@ class CaesarCipher(Cipher):
         """
         return self.__next_cipher
 
-    def encode(self, image, phrase) -> None:
+    def encode(self) -> None:
         """Method for encoding.
 
         Args:
@@ -80,7 +81,7 @@ class CaesarCipher(Cipher):
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
 
-    def decode(self, image, phrase) -> None:
+    def decode(self) -> None:
         """Method for decoding.
 
         Args:

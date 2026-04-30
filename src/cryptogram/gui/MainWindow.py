@@ -7,8 +7,10 @@ Version: 0.1
 """
 
 import tkinter as tk
+from PIL import Image, ImageTk
 from src.cryptogram.gui.panels.ImagePanel import ImagePanel
 from src.cryptogram.gui.panels.CypherPanel import CypherPanel
+from src.cryptogram.data.CipherFactory import CipherFactory
 from typing import Mapping, Dict, Union
 # mypy: ignore-errors
 
@@ -35,6 +37,7 @@ class MainWindow(tk.Tk):
         self.grid_rowconfigure(1, weight=5)
         self.grid_rowconfigure(2, weight=1)
         self.grid_rowconfigure(3, weight=1)
+        self.grid_rowconfigure(4, weight=1)
         for i in range(self.columns):
             self.grid_columnconfigure(i, weight=1)
 
@@ -44,23 +47,36 @@ class MainWindow(tk.Tk):
         self.__cypher_bar = CypherPanel(self)
         self.__cypher_bar.grid(row=1, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
 
+        refresh_image = Image.open("/home/codio/workspace/python/src/resources/refresh.png")
+        refresh_image = refresh_image.resize((50,50))
+        refresh_image = ImageTk.PhotoImage(refresh_image)
+        refresh_button: tk.Button = tk.Button(master=self, image=refresh_image,
+                                              command=lambda:
+                                              self.action_performed("refresh"),
+                                              font=self.font)
+        refresh_button.grid(**self._grid_dict(0, self.columns - 1, "NW"))
+        refresh_button.image = refresh_image
+
+        self.__current_encryption_phrase = tk.Label(master=self, text="Current key: ", font=self.font)
+        self.__current_encryption_phrase.grid(row=0, column=0, padx=10, sticky="NW", columnspan=self.columns)
+
         self.__keyphrase_label = tk.Label(master=self, text="Key/Phrase:", font=self.font)
-        self.__keyphrase_label.grid(row=2, column=0, padx=10, sticky="WE")
+        self.__keyphrase_label.grid(row=3, column=0, padx=10, sticky="WE")
 
         self._keyphrase = tk.Entry(master=self, font=self.font)
-        self._keyphrase.grid(row=2, column=1, padx=10, sticky="WE", columnspan=self.columns - 1)
+        self._keyphrase.grid(row=3, column=1, padx=10, sticky="WE", columnspan=self.columns - 1)
 
-        load_button: tk.Button = tk.Button(master=self, text="Load",
+        load_button: tk.Button = tk.Button(master=self, text="Load Image",
                                              command=lambda:
                                              self.action_performed("load"),
                                              font=self.font)
-        load_button.grid(**self._grid_dict(3, 0, "NEWS"), columnspan=2)
+        load_button.grid(**self._grid_dict(4, 0, "NEWS"), columnspan=2)
 
-        save_button: tk.Button = tk.Button(master=self, text="Save",
+        save_button: tk.Button = tk.Button(master=self, text="Save Image",
                                            command=lambda:
                                            self.action_performed("save"),
                                            font=self.font)
-        save_button.grid(**self._grid_dict(3, 2, "NWES"), columnspan=2)
+        save_button.grid(**self._grid_dict(4, 2, "NWES"), columnspan=2)
 
     def action_performed(self, text: str) -> None:
         """Actions when a button is pressed.
@@ -73,9 +89,13 @@ class MainWindow(tk.Tk):
             None
         """
         if text == "load":
-            self.__image_panel.load_image()
+            self.__image_panel.load_file()
         elif text == "save":
             pass
+        elif text == "refresh":
+            test_cipher = CipherFactory.encrypt("Caesar", self._keyphrase.get(), self.__image_panel.get_image())
+            test_cipher.encode()
+            self.__current_encryption_phrase.config(text=f"Current key: {test_cipher.phrase}")
         else:
             raise ValueError("Something bad happened in MainWindow")
 

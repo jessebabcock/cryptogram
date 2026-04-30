@@ -45,7 +45,7 @@ class Cipher(ABC):
 
     @property
     @abstractmethod
-    def previous_cipher(self) -> Cipher:
+    def previous_cipher(self):
         """Abstract method for previous Cipher getter.
 
         Args:
@@ -55,7 +55,7 @@ class Cipher(ABC):
 
     @property
     @abstractmethod
-    def next_cipher(self) -> Cipher:
+    def next_cipher(self):
         """Abstract method for next Cipher getter.
 
         Args:
