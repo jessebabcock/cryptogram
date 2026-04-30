@@ -15,8 +15,6 @@ class CaesarCipher(Cipher):
 
     def __init__(self, phrase: str, image, shift_amount: int) -> None:
         self.__name: str = "Ceasar Cipher"
-        self.__previous_cipher: Optional[Cipher] = None
-        self.__next_cipher: Optional[Cipher] = None
         self.__shift_amount: int = shift_amount
         self.__phrase: str = phrase
         self.__image = image

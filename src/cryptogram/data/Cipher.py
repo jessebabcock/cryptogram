@@ -42,26 +42,6 @@ class Cipher(ABC):
             None
         """
         raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def previous_cipher(self):
-        """Abstract method for previous Cipher getter.
-
-        Args:
-            None
-        """
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def next_cipher(self):
-        """Abstract method for next Cipher getter.
-
-        Args:
-            None
-        """
-        raise NotImplementedError
     
     @property
     @abstractmethod

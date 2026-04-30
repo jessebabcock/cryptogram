@@ -54,7 +54,7 @@ class MainWindow(tk.Tk):
                                               command=lambda:
                                               self.action_performed("refresh"),
                                               font=self.font)
-        refresh_button.grid(**self._grid_dict(0, self.columns - 1, "NW"))
+        refresh_button.grid(**self._grid_dict(0, self.columns - 1, "NE"))
         refresh_button.image = refresh_image
 
         self.__current_encryption_phrase = tk.Label(master=self, text="Current key: ", font=self.font)
