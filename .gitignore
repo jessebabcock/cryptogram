@@ -1,0 +1,5 @@
+.mypy_cache
+.tox
+reports
+.coverage
+__pycache__/

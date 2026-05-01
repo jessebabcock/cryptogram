@@ -15,6 +15,7 @@ class CipherImage():
 
     @staticmethod
     def caesar_image(image, shift):
+        #maybe look into flattened data
         image_array = image.load()
         for x in range(image.width):
             for y in range(image.height):
