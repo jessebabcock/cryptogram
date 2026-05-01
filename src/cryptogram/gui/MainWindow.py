@@ -94,8 +94,9 @@ class MainWindow(tk.Tk):
             pass
         elif text == "refresh":
             test_cipher = CipherFactory.encrypt("Caesar", self._keyphrase.get(), self.__image_panel.get_image())
-            test_cipher.encode()
+            test_cipher.encode(self.__image_panel)
             self.__current_encryption_phrase.config(text=f"Current key: {test_cipher.phrase}")
+            self.__image_panel.display_image(ImageTk.PhotoImage(test_cipher.image))
         else:
             raise ValueError("Something bad happened in MainWindow")
 

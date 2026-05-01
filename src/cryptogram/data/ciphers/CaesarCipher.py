@@ -6,7 +6,11 @@ Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
 """
 
+import multiprocessing
+import numpy as np
+from PIL import Image, ImageTk, ImageDraw
 from src.cryptogram.data.Cipher import Cipher
+from src.cryptogram.data.image.CipherImage import CipherImage
 from typing import List, Optional
 
 
@@ -18,6 +22,7 @@ class CaesarCipher(Cipher):
         self.__shift_amount: int = shift_amount
         self.__phrase: str = phrase
         self.__image = image
+        
 
     @property
     def name(self) -> str:
@@ -45,26 +50,26 @@ class CaesarCipher(Cipher):
             None
         """
         self.__phrase = value
-
+    
     @property
-    def previous_cipher(self) -> Cipher:
-        """Previous Cipher getter.
+    def image(self) -> str:
+        """Phrase getter.
 
         Args:
             None
         """
-        return self.__previous_cipher
+        return self.__image
 
-    @property
-    def next_cipher(self) -> Cipher:
-        """Next Cipher getter.
+    @image.setter
+    def image(self, value: str) -> None:
+        """Phrase setter.
 
         Args:
             None
         """
-        return self.__next_cipher
+        self.__image = value
 
-    def encode(self) -> None:
+    def encode(self, window) -> None:
         """Method for encoding.
 
         Args:
@@ -78,6 +83,36 @@ class CaesarCipher(Cipher):
             char = chr(new_char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
+
+        # threads = 2
+        # start = 0
+        # scale = self.image.width * self.image.height
+        # step = scale // threads
+        # thread_array = [None] * threads
+        # image_array = list(self.image.getdata())
+        # for i in range(threads):
+        #     if i == 3:
+        #         if step * threads > scale:
+        #             step -= ((step * (threads - 1)) - scale)
+        #     thread_array[i] = multiprocessing.Process(target=CipherImage.run, args=(image_array, start, start + step, self.__shift_amount))
+        #     thread_array[i].start()
+        #     start += step
+
+        # for i in range(threads):
+        #     thread_array[i].join()
+
+        # self.image = CipherImage.encrypted_image()
+        image_array = self.image.load()
+        image_numpy = np.array(self.image)
+        for x in range(self.image.width):
+            for y in range(self.image.height):
+                new_color = (image_array[x, y][0] + self.__shift_amount,
+                             image_array[x, y][1] + self.__shift_amount,
+                             image_array[x, y][2] + self.__shift_amount,
+                             image_array[x, y][3])
+                image_array[x, y] = new_color
+            window.display_image(ImageTk.PhotoImage(self.image))
+            window.update_idletasks()
 
     def decode(self) -> None:
         """Method for decoding.

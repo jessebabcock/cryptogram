@@ -49,11 +49,12 @@ class ImagePanel(tk.Frame):
         print(text)
 
     def display_image(self, image):
+        self.__image = image
         self.__image_display.config(image=image)
         self.__image_display.image = image
     
     def get_image(self):
-        return self.__image_display.image
+        return ImageTk.getimage(self.__image)
     
     def load_file(self):
         file_name = filedialog.askopenfilename(title='Open a file', initialdir='/home/codio/workspace/python/src/resources')
