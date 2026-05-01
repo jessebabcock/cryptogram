@@ -9,7 +9,7 @@ Version: 0.1
 import tkinter as tk
 from PIL import Image, ImageTk
 from src.cryptogram.gui.panels.ImagePanel import ImagePanel
-from src.cryptogram.gui.panels.CypherPanel import CypherPanel
+from src.cryptogram.gui.panels.CipherPanel import CipherPanel
 from src.cryptogram.data.CipherFactory import CipherFactory
 from typing import Mapping, Dict, Union
 # mypy: ignore-errors
@@ -44,8 +44,8 @@ class MainWindow(tk.Tk):
         self.__image_panel: tk.Widget = ImagePanel(self)
         self.__image_panel.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
 
-        self.__cypher_bar = CypherPanel(self)
-        self.__cypher_bar.grid(row=1, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
+        self.__cipher_bar = CipherPanel(self)
+        self.__cipher_bar.grid(row=1, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
 
         refresh_image = Image.open("/home/codio/workspace/python/src/resources/refresh.png")
         refresh_image = refresh_image.resize((50,50))
@@ -59,12 +59,6 @@ class MainWindow(tk.Tk):
 
         self.__current_encryption_phrase = tk.Label(master=self, text="Current key: ", font=self.font)
         self.__current_encryption_phrase.grid(row=0, column=0, padx=10, sticky="NW", columnspan=self.columns)
-
-        self.__keyphrase_label = tk.Label(master=self, text="Key/Phrase:", font=self.font)
-        self.__keyphrase_label.grid(row=3, column=0, padx=10, sticky="WE")
-
-        self._keyphrase = tk.Entry(master=self, font=self.font)
-        self._keyphrase.grid(row=3, column=1, padx=10, sticky="WE", columnspan=self.columns - 1)
 
         load_button: tk.Button = tk.Button(master=self, text="Load Image",
                                              command=lambda:
@@ -93,7 +87,8 @@ class MainWindow(tk.Tk):
         elif text == "save":
             pass
         elif text == "refresh":
-            test_cipher = CipherFactory.encrypt("Caesar", self._keyphrase.get(), self.__image_panel.get_image())
+            phrase = self.__cipher_bar.keyphrase.get()
+            test_cipher = CipherFactory.encrypt("Caesar", phrase, self.__image_panel.get_image())
             test_cipher.encode(self.__image_panel)
             self.__current_encryption_phrase.config(text=f"Current key: {test_cipher.phrase}")
             self.__image_panel.display_image(ImageTk.PhotoImage(test_cipher.image))

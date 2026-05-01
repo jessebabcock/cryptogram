@@ -55,12 +55,12 @@ class ImagePanel(tk.Frame):
     
     def get_image(self):
         return ImageTk.getimage(self.__image)
-    
+
     def load_file(self):
         file_name = filedialog.askopenfilename(title='Open a file', initialdir='/home/codio/workspace/python/src/resources')
         new_image = ImageTk.PhotoImage(Image.open(file_name))
         self.display_image(new_image)
-        
+
     def _grid_dict(self,
                    row: int,
                    column: int,

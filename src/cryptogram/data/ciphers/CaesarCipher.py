@@ -7,22 +7,21 @@ Version: 0.1
 """
 
 import multiprocessing
-import numpy as np
-from PIL import Image, ImageTk, ImageDraw
+from PIL import Image, ImageTk
 from src.cryptogram.data.Cipher import Cipher
 from src.cryptogram.data.image.CipherImage import CipherImage
 from typing import List, Optional
 
 
 class CaesarCipher(Cipher):
-    """Interface for ciphers."""
+    """Caesar's Cipher encryption."""
 
     def __init__(self, phrase: str, image, shift_amount: int) -> None:
         self.__name: str = "Ceasar Cipher"
         self.__shift_amount: int = shift_amount
         self.__phrase: str = phrase
         self.__image = image
-        
+
 
     @property
     def name(self) -> str:
@@ -78,8 +77,8 @@ class CaesarCipher(Cipher):
         encoded_phrase: List[str] = list()
         for char in self.phrase:
             new_char = (ord(char) + self.__shift_amount)
-            if new_char > ord('z'):
-                new_char = new_char  % ord('a') + ord('a')
+            if new_char > ord('~'):
+                new_char = ord('!') + (new_char % ord('!'))
             char = chr(new_char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
@@ -101,18 +100,7 @@ class CaesarCipher(Cipher):
         # for i in range(threads):
         #     thread_array[i].join()
 
-        # self.image = CipherImage.encrypted_image()
-        image_array = self.image.load()
-        image_numpy = np.array(self.image)
-        for x in range(self.image.width):
-            for y in range(self.image.height):
-                new_color = (image_array[x, y][0] + self.__shift_amount,
-                             image_array[x, y][1] + self.__shift_amount,
-                             image_array[x, y][2] + self.__shift_amount,
-                             image_array[x, y][3])
-                image_array[x, y] = new_color
-            window.display_image(ImageTk.PhotoImage(self.image))
-            window.update_idletasks()
+        CipherImage.caesar_image(self.image, self.__shift_amount)
 
     def decode(self) -> None:
         """Method for decoding.
