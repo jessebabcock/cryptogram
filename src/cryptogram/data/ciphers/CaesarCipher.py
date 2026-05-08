@@ -74,11 +74,13 @@ class CaesarCipher(Cipher):
         Args:
             None
         """
+        image_shift = 0
         encoded_phrase: List[str] = list()
         for char in self.phrase:
             new_char = (ord(char) + self.__shift_amount)
             if new_char > ord('~'):
                 new_char = ord('!') + (new_char % ord('!'))
+            image_shift += new_char
             char = chr(new_char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
@@ -100,7 +102,7 @@ class CaesarCipher(Cipher):
         # for i in range(threads):
         #     thread_array[i].join()
 
-        CipherImage.caesar_image(self.image, self.__shift_amount)
+        CipherImage.caesar_image(window, self.image, image_shift)
 
     def decode(self) -> None:
         """Method for decoding.

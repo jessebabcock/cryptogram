@@ -11,3 +11,4 @@ pytest
 pytest-html
 tox
 Pillow
+fastrand
