@@ -52,7 +52,6 @@ class ImagePanel(tk.Frame):
         print(text)
 
     def display_image(self, image):
-        # self.__image = image
         self.__image_display.config(image=image)
         self.__image_display.image = image
     

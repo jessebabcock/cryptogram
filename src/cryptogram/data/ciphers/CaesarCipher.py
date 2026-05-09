@@ -128,11 +128,12 @@ class CaesarCipher(Cipher):
         encoded_phrase: List[str] = list()
         for char in self.phrase:
             new_char = ord(char) + self.__shift_amount
-            image_shift += (ord(char) + self.__shift_amount) * self.__seed_pad
+            image_shift += new_char * self.__seed_pad
             if new_char > ord('~'):
-                new_char = new_char - ord('~') + ord('!')
+                new_char = new_char - ord('~') + ord('!') - 1
             char = chr(new_char)
             encoded_phrase.append(char)
+        print(image_shift)
         self.phrase = "".join(encoded_phrase)
         self.__encoded_image = CipherImage.flip_image(window, self.image, image_shift)
         window.display_image(ImageTk.PhotoImage(self.__encoded_image))
@@ -149,12 +150,13 @@ class CaesarCipher(Cipher):
         image_shift = 0
         decoded_phrase: List[str] = list()
         for char in self.phrase:
-            image_shift += ord(char) * self.__seed_pad
             new_char = ord(char) - self.__shift_amount
+            image_shift += new_char * self.__seed_pad
             if new_char < ord('!'):
-                new_char = ord('~') + new_char - ord('!')
+                new_char = ord('~') + new_char - ord('!') + 1
             char = chr(new_char)
             decoded_phrase.append(char)
+        print(image_shift)
         self.phrase = "".join(decoded_phrase)
         self.image = CipherImage.flip_image(window, self.__encoded_image, image_shift)
         window.display_image(ImageTk.PhotoImage(self.image))
