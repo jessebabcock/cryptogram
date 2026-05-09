@@ -16,6 +16,6 @@ class CipherFactory():
     def encrypt(cipher: str, phrase: str, image):
         cipher = cipher.lower()
         if cipher == "caesar":
-            shift_amount = 150
+            shift_amount = 4
             return CaesarCipher(phrase, image, shift_amount)
             

@@ -58,7 +58,9 @@ class CipherPanel(tk.Frame):
         Returns:
             None
         """
-        print(text)
+        if text == "caesar":
+            self.__master.image_panel.cipher.decode(self.__master.image_panel)
+            self.__master.update_phrase_text()
 
     def _grid_dict(self,
                    row: int,

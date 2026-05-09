@@ -21,7 +21,7 @@ class CaesarCipher(Cipher):
         self.__shift_amount: int = shift_amount
         self.__phrase: str = phrase
         self.__image = image
-
+        self.__seed_pad = (42 * 8191)
 
     @property
     def name(self) -> str:
@@ -29,6 +29,9 @@ class CaesarCipher(Cipher):
 
         Args:
             None
+
+        Returns:
+            str: Name
         """
         return self.__name
 
@@ -38,6 +41,9 @@ class CaesarCipher(Cipher):
 
         Args:
             None
+
+        Returns:
+            str: Phrase
         """
         return self.__phrase
 
@@ -51,17 +57,41 @@ class CaesarCipher(Cipher):
         self.__phrase = value
     
     @property
-    def image(self) -> str:
-        """Phrase getter.
+    def encoded(self) -> bool:
+        """Encoded bool getter.
 
         Args:
             None
+
+        Returns:
+            bool: Wether its encoded or not
+        """
+        return self.__encoded
+
+    @encoded.setter
+    def encoded(self, value: bool) -> None:
+        """Encoded bool getter.
+
+        Args:
+            None
+        """
+        self.__encoded = value
+    
+    @property
+    def image(self) -> str:
+        """Image getter.
+
+        Args:
+            None
+
+        Returns:
+            str: Current state of the image
         """
         return self.__image
 
     @image.setter
     def image(self, value: str) -> None:
-        """Phrase setter.
+        """Image setter.
 
         Args:
             None
@@ -77,44 +107,33 @@ class CaesarCipher(Cipher):
         image_shift = 0
         encoded_phrase: List[str] = list()
         for char in self.phrase:
-            new_char = (ord(char) + self.__shift_amount)
+            new_char = ord(char) + self.__shift_amount
+            image_shift += (ord(char) + self.__shift_amount) * self.__seed_pad
             if new_char > ord('~'):
-                new_char = ord('!') + (new_char % ord('!'))
-            image_shift += new_char
+                new_char = new_char - ord('~') + ord('!')
             char = chr(new_char)
+            print(char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
+        self.__encoded_image = CipherImage.flip_image(window, self.image, image_shift)
+        window.display_image(ImageTk.PhotoImage(self.__encoded_image))
 
-        # threads = 2
-        # start = 0
-        # scale = self.image.width * self.image.height
-        # step = scale // threads
-        # thread_array = [None] * threads
-        # image_array = list(self.image.getdata())
-        # for i in range(threads):
-        #     if i == 3:
-        #         if step * threads > scale:
-        #             step -= ((step * (threads - 1)) - scale)
-        #     thread_array[i] = multiprocessing.Process(target=CipherImage.run, args=(image_array, start, start + step, self.__shift_amount))
-        #     thread_array[i].start()
-        #     start += step
-
-        # for i in range(threads):
-        #     thread_array[i].join()
-
-        CipherImage.caesar_image(window, self.image, image_shift)
-
-    def decode(self) -> None:
+    def decode(self, window) -> None:
         """Method for decoding.
 
         Args:
             None
         """
+        image_shift = 0
         decoded_phrase: List[str] = list()
         for char in self.phrase:
-            new_char = (ord(char) - self.__shift_amount)
-            if new_char < ord('a'):
-                new_char = new_char + ord('z') % ord('a')
+            image_shift += ord(char) * self.__seed_pad
+            new_char = ord(char) - self.__shift_amount
+            if new_char < ord('!'):
+                new_char = ord('~') + new_char - ord('!')
             char = chr(new_char)
             decoded_phrase.append(char)
         self.phrase = "".join(decoded_phrase)
+        print(self.__encoded_image)
+        self.image = CipherImage.flip_image(window, self.__encoded_image, image_shift)
+        window.display_image(ImageTk.PhotoImage(self.image))

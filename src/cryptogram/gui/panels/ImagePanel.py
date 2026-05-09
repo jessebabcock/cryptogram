@@ -6,10 +6,12 @@ Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
 """
 
+from tkinter.ttk import Scrollbar
 import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
 from typing import Mapping, Dict, Union
+from src.cryptogram.data.Cipher import Cipher
 # mypy: ignore-errors
 
 
@@ -35,6 +37,7 @@ class ImagePanel(tk.Frame):
         self.__image_display = tk.Label(master=self, text="Placeholder", borderwidth=3, relief="solid")
         self.__image_display.grid(**self._grid_dict(0, 0, "NSEW"))
         self.display_image(self.__image)
+        self.cipher: Cipher = None
 
     def action_performed(self, text: str) -> None:
         """Actions when a button is pressed.

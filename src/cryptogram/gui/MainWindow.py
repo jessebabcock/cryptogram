@@ -41,11 +41,11 @@ class MainWindow(tk.Tk):
         for i in range(self.columns):
             self.grid_columnconfigure(i, weight=1)
 
-        self.__image_panel: tk.Widget = ImagePanel(self)
-        self.__image_panel.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
+        self.image_panel: tk.Widget = ImagePanel(self)
+        self.image_panel.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
 
-        self.__cipher_bar = CipherPanel(self)
-        self.__cipher_bar.grid(row=1, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
+        self.cipher_bar = CipherPanel(self)
+        self.cipher_bar.grid(row=1, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
 
         refresh_image = Image.open("/home/codio/workspace/python/src/resources/refresh.png")
         refresh_image = refresh_image.resize((50,50))
@@ -83,17 +83,20 @@ class MainWindow(tk.Tk):
             None
         """
         if text == "load":
-            self.__image_panel.load_file()
+            self.image_panel.load_file()
         elif text == "save":
             pass
         elif text == "refresh":
-            phrase = self.__cipher_bar.keyphrase.get()
-            test_cipher = CipherFactory.encrypt("Caesar", phrase, self.__image_panel.get_image())
-            test_cipher.encode(self.__image_panel)
-            self.__current_encryption_phrase.config(text=f"Current key: {test_cipher.phrase}")
-            self.__image_panel.display_image(ImageTk.PhotoImage(test_cipher.image))
+            phrase = self.cipher_bar.keyphrase.get()
+            if self.image_panel.cipher is None:
+                self.image_panel.cipher = CipherFactory.encrypt("Caesar", phrase, self.image_panel.get_image())
+            self.image_panel.cipher.encode(self.image_panel)
+            self.update_phrase_text()
         else:
             raise ValueError("Something bad happened in MainWindow")
+    
+    def update_phrase_text(self):
+        self.__current_encryption_phrase.config(text=f"Current key: {self.image_panel.cipher.phrase}")
 
     def load_image_panel(self) -> None:
         """Loads the main menu panel.
