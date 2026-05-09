@@ -16,12 +16,29 @@ from typing import List, Optional
 class CaesarCipher(Cipher):
     """Caesar's Cipher encryption."""
 
+    _instance = None
+
     def __init__(self, phrase: str, image, shift_amount: int) -> None:
         self.__name: str = "Ceasar Cipher"
         self.__shift_amount: int = shift_amount
         self.__phrase: str = phrase
         self.__image = image
+        self.__encoded = False
         self.__seed_pad = (42 * 8191)
+
+    def __new__(cls, phrase: str, image, shift_amount: int) -> "CustomItemList":
+        """Returns singleton instance for custom item list.
+
+        Args:
+            None
+
+        Returns:
+            CustomItemList: Singleton instance
+            of CustomItemList.
+        """
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
 
     @property
     def name(self) -> str:
@@ -104,6 +121,9 @@ class CaesarCipher(Cipher):
         Args:
             None
         """
+        if self.encoded:
+            return
+        self.encoded = True
         image_shift = 0
         encoded_phrase: List[str] = list()
         for char in self.phrase:
@@ -112,7 +132,6 @@ class CaesarCipher(Cipher):
             if new_char > ord('~'):
                 new_char = new_char - ord('~') + ord('!')
             char = chr(new_char)
-            print(char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
         self.__encoded_image = CipherImage.flip_image(window, self.image, image_shift)
@@ -124,6 +143,9 @@ class CaesarCipher(Cipher):
         Args:
             None
         """
+        if not self.encoded:
+            return
+        self.encoded = False
         image_shift = 0
         decoded_phrase: List[str] = list()
         for char in self.phrase:
@@ -134,6 +156,5 @@ class CaesarCipher(Cipher):
             char = chr(new_char)
             decoded_phrase.append(char)
         self.phrase = "".join(decoded_phrase)
-        print(self.__encoded_image)
         self.image = CipherImage.flip_image(window, self.__encoded_image, image_shift)
         window.display_image(ImageTk.PhotoImage(self.image))

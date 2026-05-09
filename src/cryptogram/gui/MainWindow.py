@@ -88,10 +88,12 @@ class MainWindow(tk.Tk):
             pass
         elif text == "refresh":
             phrase = self.cipher_bar.keyphrase.get()
-            if self.image_panel.cipher is None:
+            if self.image_panel.cipher is None or self.image_panel.cipher.phrase != phrase:
                 self.image_panel.cipher = CipherFactory.encrypt("Caesar", phrase, self.image_panel.get_image())
+            print(self.image_panel.cipher.phrase, phrase)
             self.image_panel.cipher.encode(self.image_panel)
             self.update_phrase_text()
+            print(self.image_panel.cipher.phrase)
         else:
             raise ValueError("Something bad happened in MainWindow")
     
