@@ -19,7 +19,7 @@ class CaesarCipher(Cipher):
     _instance = None
 
     def __init__(self, phrase: str, image, shift_amount: int) -> None:
-        self.__name: str = "Ceasar Cipher"
+        self.__name: str = "Ceasar"
         self.__shift_amount: int = shift_amount
         self.__phrase: str = phrase
         self.__image = image

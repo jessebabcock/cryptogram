@@ -90,8 +90,10 @@ class MainWindow(tk.Tk):
             pass
         elif text == "encode":
             phrase = self.cipher_bar.keyphrase.get()
-            if self.image_panel.cipher is None or self.image_panel.cipher.phrase != phrase:
-                self.image_panel.cipher = CipherFactory.encrypt("Caesar", phrase, self.image_panel.get_image())
+            if (self.image_panel.cipher is None or
+                self.image_panel.cipher.phrase != phrase or
+                self.image_panel.cipher.name != self.cipher_bar.cipher_style):
+                self.image_panel.cipher = CipherFactory.encrypt(self.cipher_bar.cipher_style, phrase, self.image_panel.get_image())
             self.image_panel.cipher.encode(self.image_panel)
             self.update_phrase_text()
         elif text == "decode":
