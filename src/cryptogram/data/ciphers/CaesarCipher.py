@@ -151,10 +151,10 @@ class CaesarCipher(Cipher):
         decoded_phrase: List[str] = list()
         for char in self.phrase:
             new_char = ord(char) - self.__shift_amount
-            image_shift += new_char * self.__seed_pad
             if new_char < ord('!'):
                 new_char = ord('~') + new_char - ord('!') + 1
             char = chr(new_char)
+            image_shift += (new_char + self.__shift_amount) * self.__seed_pad
             decoded_phrase.append(char)
         print(image_shift)
         self.phrase = "".join(decoded_phrase)
