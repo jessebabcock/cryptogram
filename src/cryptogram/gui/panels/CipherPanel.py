@@ -33,15 +33,25 @@ class CipherPanel(tk.Frame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=1)
+        self.cipher_style = "Caesar"
+        self.__current_cipher = None
 
         self.__cipher_label = tk.Label(master=self, text="Ciphers", font=self.font)
         self.__cipher_label.grid(row=0, column=0, padx=10, sticky="WE", columnspan=self.columns)
 
-        caesar_button: tk.Button = tk.Button(master=self, text="Caesar",
+        self.caesar_button: tk.Button = tk.Button(master=self, text="Caesar",
                                              command=lambda:
-                                             self.action_performed("caesar"))
-        caesar_button.grid(**self._grid_dict(1, 0, "NSEW"))
-    
+                                             self.action_performed("caesar"),
+                                             relief="sunken")
+        self.caesar_button.grid(**self._grid_dict(1, 0, "NSEW"))
+        self.caesar_button.bind('<Button>', 'break')
+        self.__current_cipher = self.caesar_button
+
+        self.test_button: tk.Button = tk.Button(master=self, text="Test",
+                                             command=lambda:
+                                             self.action_performed("test"))
+        self.test_button.grid(**self._grid_dict(1, 1, "NSEW"))
+
         self.__keyphrase_label = tk.Label(master=self, text="Key/Phrase:", font=self.font)
         self.__keyphrase_label.grid(**self._grid_dict(2, 0, "EW"))
 
@@ -59,8 +69,17 @@ class CipherPanel(tk.Frame):
             None
         """
         if text == "caesar":
-            self.__master.image_panel.cipher.decode(self.__master.image_panel)
-            self.__master.update_phrase_text()
+            self.__current_cipher.unbind('<Button>')
+            self.__current_cipher.config(relief="raised")
+            self.caesar_button.bind('<Button>', 'break')
+            self.caesar_button.config(relief="sunken")
+            self.__current_cipher = self.caesar_button
+        elif text == "test":
+            self.__current_cipher.unbind('<Button>')
+            self.__current_cipher.config(relief="raised")
+            self.test_button.bind('<Button>', 'break')
+            self.test_button.config(relief="sunken")
+            self.__current_cipher = self.test_button
 
     def _grid_dict(self,
                    row: int,

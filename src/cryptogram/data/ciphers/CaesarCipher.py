@@ -133,7 +133,6 @@ class CaesarCipher(Cipher):
                 new_char = new_char - ord('~') + ord('!') - 1
             char = chr(new_char)
             encoded_phrase.append(char)
-        print(image_shift)
         self.phrase = "".join(encoded_phrase)
         self.__encoded_image = CipherImage.flip_image(window, self.image, image_shift)
         window.display_image(ImageTk.PhotoImage(self.__encoded_image))
@@ -156,7 +155,6 @@ class CaesarCipher(Cipher):
             char = chr(new_char)
             image_shift += (new_char + self.__shift_amount) * self.__seed_pad
             decoded_phrase.append(char)
-        print(image_shift)
         self.phrase = "".join(decoded_phrase)
         self.image = CipherImage.flip_image(window, self.__encoded_image, image_shift)
         window.display_image(ImageTk.PhotoImage(self.image))

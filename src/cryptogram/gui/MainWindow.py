@@ -45,17 +45,19 @@ class MainWindow(tk.Tk):
         self.image_panel.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
 
         self.cipher_bar = CipherPanel(self)
-        self.cipher_bar.grid(row=1, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
+        self.cipher_bar.grid(row=3, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
 
-        refresh_image = Image.open("/home/codio/workspace/python/src/resources/refresh.png")
-        refresh_image = refresh_image.resize((50,50))
-        refresh_image = ImageTk.PhotoImage(refresh_image)
-        refresh_button: tk.Button = tk.Button(master=self, image=refresh_image,
+        encode_button: tk.Button = tk.Button(master=self, text="Encode",
                                               command=lambda:
-                                              self.action_performed("refresh"),
+                                              self.action_performed("encode"),
                                               font=self.font)
-        refresh_button.grid(**self._grid_dict(0, self.columns - 1, "NE"))
-        refresh_button.image = refresh_image
+        encode_button.grid(**self._grid_dict(1, 2, "NW"))
+
+        decode_button: tk.Button = tk.Button(master=self, text="Decode",
+                                              command=lambda:
+                                              self.action_performed("decode"),
+                                              font=self.font)
+        decode_button.grid(**self._grid_dict(1, 1, "NE"))
 
         self.__current_encryption_phrase = tk.Label(master=self, text="Current key: ", font=self.font)
         self.__current_encryption_phrase.grid(row=0, column=0, padx=10, sticky="NW", columnspan=self.columns)
@@ -86,11 +88,14 @@ class MainWindow(tk.Tk):
             self.image_panel.load_file()
         elif text == "save":
             pass
-        elif text == "refresh":
+        elif text == "encode":
             phrase = self.cipher_bar.keyphrase.get()
             if self.image_panel.cipher is None or self.image_panel.cipher.phrase != phrase:
                 self.image_panel.cipher = CipherFactory.encrypt("Caesar", phrase, self.image_panel.get_image())
             self.image_panel.cipher.encode(self.image_panel)
+            self.update_phrase_text()
+        elif text == "decode":
+            self.image_panel.cipher.decode(self.image_panel)
             self.update_phrase_text()
         else:
             raise ValueError("Something bad happened in MainWindow")
