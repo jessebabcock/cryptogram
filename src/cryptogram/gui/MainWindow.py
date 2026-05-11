@@ -87,7 +87,7 @@ class MainWindow(tk.Tk):
         if text == "load":
             self.image_panel.load_file()
         elif text == "save":
-            pass
+            self.image_panel.cipher.save()
         elif text == "encode":
             phrase = self.cipher_bar.keyphrase.get()
             if (self.image_panel.cipher is None or

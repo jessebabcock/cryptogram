@@ -11,6 +11,8 @@ from PIL import Image, ImageTk
 from src.cryptogram.data.Cipher import Cipher
 from src.cryptogram.data.image.CipherImage import CipherImage
 from typing import List, Optional
+import re
+import struct
 
 
 class CaesarCipher(Cipher):
@@ -134,8 +136,8 @@ class CaesarCipher(Cipher):
             char = chr(new_char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
-        self.__encoded_image = CipherImage.flip_image(window, self.image, image_shift)
-        window.display_image(ImageTk.PhotoImage(self.__encoded_image))
+        self.image = CipherImage.flip_image(window, self.image, image_shift)
+        window.display_image(ImageTk.PhotoImage(self.image))
 
     def decode(self, window) -> None:
         """Method for decoding.
@@ -158,3 +160,18 @@ class CaesarCipher(Cipher):
         self.phrase = "".join(decoded_phrase)
         self.image = CipherImage.flip_image(window, self.__encoded_image, image_shift)
         window.display_image(ImageTk.PhotoImage(self.image))
+
+    def save(self) -> str:
+        # .encode() is byte format not cipher, bool is 1 byte but helps with padding
+        # 42 byte header
+        print(self.image.height.to_bytes(4, 'little'))
+        file_content = [self.name.encode().zfill(8),
+                        self.image.height.to_bytes(4, 'little'),
+                        self.image.width.to_bytes(4, 'little'),
+                        self.__shift_amount.to_bytes(2, 'little'),
+                        self.encoded.to_bytes(1, 'little'),
+                        self.phrase.encode().zfill(20),
+                        '/'.encode()]
+        file_content.append(self.image.tobytes())
+        with open("test.cryptogram", "wb") as file:
+            file.write(b"".join(file_content))

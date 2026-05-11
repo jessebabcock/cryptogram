@@ -12,6 +12,8 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 from typing import Mapping, Dict, Union
 from src.cryptogram.data.Cipher import Cipher
+import re
+from io import BytesIO
 # mypy: ignore-errors
 
 
@@ -32,12 +34,14 @@ class ImagePanel(tk.Frame):
         tk.Frame.__init__(self, master=self.__master)
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
-        self.__image = ImageTk.PhotoImage(Image.open("/home/codio/workspace/python/src/resources/test.jpeg"))
-
+        self.__image = None
         self.__image_display = tk.Label(master=self, text="Placeholder", borderwidth=3, relief="solid")
         self.__image_display.grid(**self._grid_dict(0, 0, "NSEW"))
-        self.display_image(self.__image)
         self.cipher: Cipher = None
+
+        self.load_file()
+
+        
 
     def action_performed(self, text: str) -> None:
         """Actions when a button is pressed.
@@ -52,6 +56,8 @@ class ImagePanel(tk.Frame):
         print(text)
 
     def display_image(self, image):
+        print(ImageTk.getimage(image).getpixel((150,150)))
+        self.__image = image
         self.__image_display.config(image=image)
         self.__image_display.image = image
     
@@ -60,7 +66,21 @@ class ImagePanel(tk.Frame):
 
     def load_file(self):
         file_name = filedialog.askopenfilename(title='Open a file', initialdir='/home/codio/workspace/python/src/resources')
-        new_image = ImageTk.PhotoImage(Image.open(file_name))
+        if re.match('^.*\.cryptogram$', file_name):
+            with open(file_name, "rb") as file:
+                binary = file.read()
+                for thing in binary[:8]:
+                    print(chr(thing))
+                height = int.from_bytes(binary[8:12], 'little')
+                width = int.from_bytes(binary[12:16], 'little')
+                for thing in binary[8:40]:
+                    print(thing)
+                print(binary[8:40])
+                new_image = Image.frombytes('RGBA', (width, height), binary[40:])
+                print(new_image)
+                new_image = ImageTk.PhotoImage(new_image)
+        else:
+            new_image = ImageTk.PhotoImage(Image.open(file_name))
         self.display_image(new_image)
 
     def _grid_dict(self,

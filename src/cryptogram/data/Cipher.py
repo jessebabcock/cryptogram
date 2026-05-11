@@ -70,3 +70,12 @@ class Cipher(ABC):
             None
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def save(self) -> str:
+        """Abstract method for decoding.
+
+        Args:
+            None
+        """
+        raise NotImplementedError
