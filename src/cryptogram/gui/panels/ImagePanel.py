@@ -69,15 +69,9 @@ class ImagePanel(tk.Frame):
         if re.match('^.*\.cryptogram$', file_name):
             with open(file_name, "rb") as file:
                 binary = file.read()
-                for thing in binary[:8]:
-                    print(chr(thing))
                 height = int.from_bytes(binary[8:12], 'little')
                 width = int.from_bytes(binary[12:16], 'little')
-                for thing in binary[8:40]:
-                    print(thing)
-                print(binary[8:40])
                 new_image = Image.frombytes('RGBA', (width, height), binary[40:])
-                print(new_image)
                 new_image = ImageTk.PhotoImage(new_image)
         else:
             new_image = ImageTk.PhotoImage(Image.open(file_name))

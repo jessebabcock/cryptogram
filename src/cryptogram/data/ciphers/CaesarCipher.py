@@ -21,12 +21,12 @@ class CaesarCipher(Cipher):
     _instance = None
 
     def __init__(self, phrase: str, image, shift_amount: int) -> None:
-        self.__name: str = "Ceasar"
+        self.__name: str = "Caesar"
         self.__shift_amount: int = shift_amount
         self.__phrase: str = phrase
         self.__image = image
         self.__encoded = False
-        self.__seed_pad = (42 * 8191)
+        self.__seed_pad = (42 * 8191) + shift_amount
 
     def __new__(cls, phrase: str, image, shift_amount: int) -> "CustomItemList":
         """Returns singleton instance for custom item list.
@@ -117,18 +117,18 @@ class CaesarCipher(Cipher):
         """
         self.__image = value
 
-    def encode(self, window) -> None:
+    def encode(self, window, phrase) -> None:
         """Method for encoding.
 
         Args:
             None
         """
         if self.encoded:
-            return
+            self.decode(window)
         self.encoded = True
         image_shift = 0
         encoded_phrase: List[str] = list()
-        for char in self.phrase:
+        for char in phrase:
             new_char = ord(char) + self.__shift_amount
             image_shift += new_char * self.__seed_pad
             if new_char > ord('~'):
@@ -158,7 +158,7 @@ class CaesarCipher(Cipher):
             image_shift += (new_char + self.__shift_amount) * self.__seed_pad
             decoded_phrase.append(char)
         self.phrase = "".join(decoded_phrase)
-        self.image = CipherImage.flip_image(window, self.__encoded_image, image_shift)
+        self.image = CipherImage.flip_image(window, self.image, image_shift)
         window.display_image(ImageTk.PhotoImage(self.image))
 
     def save(self) -> str:
