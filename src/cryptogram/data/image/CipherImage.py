@@ -22,7 +22,7 @@ import time
 class CipherImage():
 
     @staticmethod
-    def flip_image(window, image, shift: int):
+    def flip_image(image, shift: int):
         image_array = np.array(image, dtype=np.uint8)
         rand = np.random.default_rng(seed=shift)
         random_array = rand.integers(0, 256, (image.height, image.width, 4), dtype=np.uint8)

@@ -74,6 +74,27 @@ class CaesarCipher(Cipher):
             None
         """
         self.__phrase = value
+ 
+    @property
+    def shift_amount(self) -> str:
+        """shift_amount getter.
+
+        Args:
+            None
+
+        Returns:
+            int: Shift amount
+        """
+        return self.__shift_amount
+
+    @shift_amount.setter
+    def shift_amount(self, value: int) -> None:
+        """shift_amount setter.
+
+        Args:
+            None
+        """
+        self.__shift_amount = value
     
     @property
     def encoded(self) -> bool:
@@ -117,14 +138,15 @@ class CaesarCipher(Cipher):
         """
         self.__image = value
 
-    def encode(self, window, phrase) -> None:
+    def encode(self, phrase) -> None:
         """Method for encoding.
 
         Args:
             None
         """
+        print(self.encoded)
         if self.encoded:
-            self.decode(window)
+            self.decode()
         self.encoded = True
         image_shift = 0
         encoded_phrase: List[str] = list()
@@ -136,10 +158,9 @@ class CaesarCipher(Cipher):
             char = chr(new_char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
-        self.image = CipherImage.flip_image(window, self.image, image_shift)
-        window.display_image(ImageTk.PhotoImage(self.image))
+        self.image = CipherImage.flip_image(self.image, image_shift)
 
-    def decode(self, window) -> None:
+    def decode(self) -> None:
         """Method for decoding.
 
         Args:
@@ -151,27 +172,25 @@ class CaesarCipher(Cipher):
         image_shift = 0
         decoded_phrase: List[str] = list()
         for char in self.phrase:
-            new_char = ord(char) - self.__shift_amount
+            new_char = ord(char) - self.shift_amount
             if new_char < ord('!'):
                 new_char = ord('~') + new_char - ord('!') + 1
             char = chr(new_char)
-            image_shift += (new_char + self.__shift_amount) * self.__seed_pad
+            image_shift += (new_char + self.shift_amount) * self.__seed_pad
             decoded_phrase.append(char)
         self.phrase = "".join(decoded_phrase)
-        self.image = CipherImage.flip_image(window, self.image, image_shift)
-        window.display_image(ImageTk.PhotoImage(self.image))
+        self.image = CipherImage.flip_image(self.image, image_shift)
 
     def save(self) -> str:
-        # .encode() is byte format not cipher, bool is 1 byte but helps with padding
-        # 42 byte header
-        print(self.image.height.to_bytes(4, 'little'))
+        # .encode() is byte format not cipher
+        # 37 byte header
+        if not self.encoded:
+            self.encode(self.phrase)
         file_content = [self.name.encode().zfill(8),
                         self.image.height.to_bytes(4, 'little'),
                         self.image.width.to_bytes(4, 'little'),
-                        self.__shift_amount.to_bytes(2, 'little'),
-                        self.encoded.to_bytes(1, 'little'),
-                        self.phrase.encode().zfill(20),
-                        '/'.encode()]
+                        self.shift_amount.to_bytes(1, 'little'),
+                        self.phrase.encode().zfill(20)]
         file_content.append(self.image.tobytes())
         with open("test.cryptogram", "wb") as file:
             file.write(b"".join(file_content))
