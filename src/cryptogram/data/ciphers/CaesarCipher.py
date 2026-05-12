@@ -74,7 +74,7 @@ class CaesarCipher(Cipher):
             None
         """
         self.__phrase = value
- 
+
     @property
     def shift_amount(self) -> str:
         """shift_amount getter.
@@ -142,9 +142,8 @@ class CaesarCipher(Cipher):
         """Method for encoding.
 
         Args:
-            None AWDAWDAFGAGASG@#$@#^@
+            None
         """
-        print(self.encoded)
         if self.encoded:
             self.decode()
         self.encoded = True
@@ -154,12 +153,12 @@ class CaesarCipher(Cipher):
             new_char = ord(char) + self.__shift_amount
             image_shift += new_char * self.__seed_pad
             if new_char > ord('~'):
-                new_char = new_char - ord('~') + ord('!') - 1
+                # new_char = new_char - ord('~') + ord('!') - 1
+                new_char = ord('!') + (new_char % ord('~')) - 1
             char = chr(new_char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
         self.image = CipherImage.flip_image(self.image, image_shift)
-        print(self.__shift_amount)
 
     def decode(self) -> None:
         """Method for decoding.
@@ -175,7 +174,8 @@ class CaesarCipher(Cipher):
         for char in self.phrase:
             new_char = ord(char) - self.shift_amount
             if new_char < ord('!'):
-                new_char = ord('~') + new_char - ord('!') + 1
+                # new_char = ord('~') + new_char - ord('!') + 1
+                new_char = ord('~') - (abs(ord('!') - new_char) % ord('~')) + 1
             char = chr(new_char)
             image_shift += (new_char + self.shift_amount) * self.__seed_pad
             decoded_phrase.append(char)
@@ -191,7 +191,7 @@ class CaesarCipher(Cipher):
         file_content = [self.name.encode().zfill(8),
                         self.image.height.to_bytes(4, 'little'),
                         self.image.width.to_bytes(4, 'little'),
-                        self.shift_amount.to_bytes(1, 'little'),
+                        self.shift_amount.to_bytes(4, 'little'),
                         phrase_padding.to_bytes(4, 'little'),
                         self.phrase.encode()]
         file_content.append(self.image.tobytes())

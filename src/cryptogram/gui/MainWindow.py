@@ -45,8 +45,6 @@ class MainWindow(tk.Tk):
         self.image_panel: tk.Widget = ImagePanel(self)
         self.image_panel.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
 
-        self.current_key = tk.StringVar(value="")
-        self.current_key.trace("w", self.update_phrase_textbox)
 
         self.encode_button: tk.Button = tk.Button(master=self, text="Encoded",
                                               command=lambda:
@@ -77,6 +75,9 @@ class MainWindow(tk.Tk):
                                            font=self.font)
         save_button.grid(**self._grid_dict(4, 2, "NWES"), columnspan=2)
 
+        self.current_key = tk.StringVar(value="")
+        self.current_key.trace("w", self.update_phrase_textbox)
+        
         self.cipher_bar = CipherPanel(self)
         self.cipher_bar.grid(row=3, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
         self.cipher_bar.keyphrase.config(textvariable=self.current_key)
@@ -101,7 +102,9 @@ class MainWindow(tk.Tk):
         elif text == "encode":
             self.encoded_pressed()
             self.check_cipher_change()
+            print(self.image_panel.cipher.encoded)
             self.image_panel.cipher.encode(self.cipher_bar.keyphrase.get())
+            print(self.image_panel.cipher.encoded)
             self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))
             self.update_encoded_text()
         elif text == "decode":
@@ -113,7 +116,6 @@ class MainWindow(tk.Tk):
             raise ValueError("Something bad happened in MainWindow")
 
     def check_cipher_change(self):
-        print(self.image_panel.cipher.name)
         if self.image_panel.cipher is None or self.image_panel.cipher.name != self.cipher_bar.cipher_style:
             self.image_panel.cipher = CipherFactory.encrypt(self.cipher_bar.cipher_style,
                                                             self.cipher_bar.keyphrase.get(),
@@ -137,6 +139,8 @@ class MainWindow(tk.Tk):
     def update_phrase_textbox(self, *args):
         if self.image_panel.cipher.encoded:
             self.image_panel.cipher.decode()
+            if self.image_panel.cipher.name == "Caesar":
+                self.image_panel.cipher.shift_amount = self.cipher_bar.shift_amount_final.get()
             self.image_panel.cipher.phrase = self.current_key.get()
             self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
             self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))

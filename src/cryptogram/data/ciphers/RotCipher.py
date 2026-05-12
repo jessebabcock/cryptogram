@@ -1,7 +1,7 @@
 """Class for src.cryptogram.data.ciphers.RotCipher
 
 Rot13 cipher that works the same as Caesar but shift
-is always 13
+is 
 
 Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
@@ -21,15 +21,15 @@ class RotCipher(Cipher):
 
     _instance = None
 
-    def __init__(self, phrase: str, image, shift_amount: int) -> None:
+    def __init__(self, phrase: str, image) -> None:
         self.__name: str = "Rot13"
-        self.__shift_amount: int = shift_amount
+        self.__shift_amount: int = 13
         self.__phrase: str = phrase
         self.__image = image
         self.__encoded = False
-        self.__seed_pad = (42 * 8191) + shift_amount
+        self.__seed_pad = (42 * 8191) + self.__shift_amount
 
-    def __new__(cls, phrase: str, image, shift_amount: int) -> "CustomItemList":
+    def __new__(cls, phrase: str, image) -> "CustomItemList":
         """Returns singleton instance for custom item list.
 
         Args:
@@ -75,6 +75,18 @@ class RotCipher(Cipher):
             None
         """
         self.__phrase = value
+
+    @property
+    def shift_amount(self) -> str:
+        """shift_amount getter.
+
+        Args:
+            None
+
+        Returns:
+            int: Shift amount
+        """
+        return self.__shift_amount
 
     @property
     def encoded(self) -> bool:
@@ -124,7 +136,6 @@ class RotCipher(Cipher):
         Args:
             None AWDAWDAFGAGASG@#$@#^@
         """
-        print(self.encoded)
         if self.encoded:
             self.decode()
         self.encoded = True
@@ -139,7 +150,6 @@ class RotCipher(Cipher):
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
         self.image = CipherImage.flip_image(self.image, image_shift)
-        print(self.__shift_amount)
 
     def decode(self) -> None:
         """Method for decoding.

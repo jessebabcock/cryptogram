@@ -21,5 +21,5 @@ class CipherFactory():
             return CaesarCipher(phrase, image, shift_amount)
         elif cipher == "rot13":
             shift_amount = 13
-            return RotCipher(phrase, image, shift_amount)
+            return RotCipher(phrase, image)
             

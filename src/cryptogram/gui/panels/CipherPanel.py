@@ -93,7 +93,8 @@ class CipherPanel(tk.Frame):
         self.shift_amount_final.trace('w', self.update_shift_amount)
         self.shift_amount_spinbox = tk.Spinbox(self, from_=0, to=float("inf"),
                                             textvariable=self.shift_amount_final,
-                                            justify=tk.RIGHT)
+                                            justify=tk.RIGHT,
+                                            state='readonly')
         self.shift_amount_spinbox.grid(**self._grid_dict(0, 0, "E"))
 
     def destroy_caesar_shift(self):
