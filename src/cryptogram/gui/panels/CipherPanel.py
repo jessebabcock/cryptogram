@@ -36,8 +36,10 @@ class CipherPanel(tk.Frame):
         self.cipher_style = "Caesar"
         self.__current_cipher = None
 
-        self.__cipher_label = tk.Label(master=self, text="Ciphers", font=self.font)
-        self.__cipher_label.grid(row=0, column=0, padx=10, sticky="WE", columnspan=self.columns)
+        self.create_caesar_shift()
+
+        # self.__cipher_label = tk.Label(master=self, text="Ciphers", font=self.font)
+        # self.__cipher_label.grid(row=0, column=1, padx=10, sticky="WE", columnspan=2)
 
         self.caesar_button: tk.Button = tk.Button(master=self, text="Caesar",
                                              command=lambda:
@@ -69,6 +71,7 @@ class CipherPanel(tk.Frame):
             None
         """
         if text == "caesar":
+            self.create_caesar_shift()
             self.cipher_style = "Caesar"
             self.__current_cipher.unbind('<Button>')
             self.__current_cipher.config(relief="raised")
@@ -76,12 +79,31 @@ class CipherPanel(tk.Frame):
             self.caesar_button.config(relief="sunken")
             self.__current_cipher = self.caesar_button
         elif text == "test":
+            self.destroy_caesar_shift()
             self.cipher_style = "Caesar"
             self.__current_cipher.unbind('<Button>')
             self.__current_cipher.config(relief="raised")
             self.test_button.bind('<Button>', 'break')
             self.test_button.config(relief="sunken")
             self.__current_cipher = self.test_button
+    
+    def create_caesar_shift(self):
+        self.__shift_amount_label = tk.Label(master=self, text="Shift: ", font=self.font)
+        self.__shift_amount_label.grid(row=0, column=0, padx=10, sticky="W")
+        self.shift_amount_final = tk.IntVar(value=0)
+        self.shift_amount_final.trace('w', self.update_shift_amount)
+        self.shift_amount_spinbox = tk.Spinbox(self, from_=0, to=float("inf"),
+                                            textvariable=self.shift_amount_final,
+                                            justify=tk.RIGHT)
+        self.shift_amount_spinbox.grid(**self._grid_dict(0, 0, "E"))
+    
+    def destroy_caesar_shift(self):
+        self.__shift_amount_label.destroy()
+        self.shift_amount_spinbox.destroy()
+    
+    def update_shift_amount(self, *args):
+        self.__master.image_panel.cipher.shift_amount = self.shift_amount_final.get()
+        self.__master.update_phrase_textbox()
 
     def _grid_dict(self,
                    row: int,

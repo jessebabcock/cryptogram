@@ -45,8 +45,10 @@ class MainWindow(tk.Tk):
         self.image_panel: tk.Widget = ImagePanel(self)
         self.image_panel.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
 
-        self.cipher_bar = CipherPanel(self)
-        self.cipher_bar.grid(row=3, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
+        self.current_key = tk.StringVar(value="")
+        self.current_key.trace("w", self.update_phrase_textbox)
+        
+        
 
         self.encode_button: tk.Button = tk.Button(master=self, text="Encoded",
                                               command=lambda:
@@ -62,10 +64,6 @@ class MainWindow(tk.Tk):
         self.decode_button.grid(**self._grid_dict(1, 1, "NE"))
         self.decode_button.bind('<Button>', 'break')
 
-        self.current_key = tk.StringVar()
-        self.current_key.trace("w", self.update_phrase_textbox)
-        self.cipher_bar.keyphrase.config(textvariable=self.current_key)
-
         self.__current_encryption_phrase = tk.Label(master=self, text="Current key: ", font=self.font)
         self.__current_encryption_phrase.grid(row=0, column=0, padx=10, sticky="NW", columnspan=self.columns)
 
@@ -80,6 +78,12 @@ class MainWindow(tk.Tk):
                                            self.action_performed("save"),
                                            font=self.font)
         save_button.grid(**self._grid_dict(4, 2, "NWES"), columnspan=2)
+
+        self.cipher_bar = CipherPanel(self)
+        self.cipher_bar.grid(row=3, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
+        self.cipher_bar.keyphrase.config(textvariable=self.current_key)
+
+        
 
         self.image_panel.load_file()
         self.deiconify()

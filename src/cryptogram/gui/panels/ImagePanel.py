@@ -38,7 +38,7 @@ class ImagePanel(tk.Frame):
         self.__image = None
         self.__image_display = tk.Label(master=self, text="Placeholder", borderwidth=3, relief="solid")
         self.__image_display.grid(**self._grid_dict(0, 0, "NSEW"))
-        self.cipher: Cipher = None
+        self.cipher: Cipher = CipherFactory.encrypt("Caesar", "", Image.new("RGBA", (1, 1), (255, 0, 0)))
 
     def action_performed(self, text: str) -> None:
         """Actions when a button is pressed.
