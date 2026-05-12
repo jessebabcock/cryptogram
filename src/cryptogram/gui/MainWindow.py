@@ -116,10 +116,17 @@ class MainWindow(tk.Tk):
             raise ValueError("Something bad happened in MainWindow")
 
     def check_cipher_change(self):
-        if self.image_panel.cipher is None or self.image_panel.cipher.name != self.cipher_bar.cipher_style:
+        if self.image_panel.cipher is None:
             self.image_panel.cipher = CipherFactory.encrypt(self.cipher_bar.cipher_style,
                                                             self.cipher_bar.keyphrase.get(),
                                                             self.image_panel.get_image())
+        elif self.image_panel.cipher.name != self.cipher_bar.cipher_style:
+            self.image_panel.cipher.decode()
+            self.image_panel.cipher = CipherFactory.encrypt(self.cipher_bar.cipher_style,
+                                                            self.image_panel.cipher.phrase,
+                                                            self.image_panel.cipher.image)
+            self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
+            print(self.image_panel.cipher.phrase)
 
     def encoded_pressed(self):
         self.decode_button.unbind('<Button>')
@@ -138,6 +145,7 @@ class MainWindow(tk.Tk):
 
     def update_phrase_textbox(self, *args):
         if self.image_panel.cipher.encoded:
+            print("hit")
             self.image_panel.cipher.decode()
             if self.image_panel.cipher.name == "Caesar":
                 self.image_panel.cipher.shift_amount = self.cipher_bar.shift_amount_final.get()

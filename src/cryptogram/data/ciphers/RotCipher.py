@@ -181,7 +181,7 @@ class RotCipher(Cipher):
         file_content = [self.name.encode().zfill(8),
                         self.image.height.to_bytes(4, 'little'),
                         self.image.width.to_bytes(4, 'little'),
-                        self.__shift_amount.to_bytes(1, 'little'),
+                        self.__shift_amount.to_bytes(4, 'little'),
                         phrase_padding.to_bytes(4, 'little'),
                         self.phrase.encode()]
         file_content.append(self.image.tobytes())

@@ -75,7 +75,8 @@ class ImagePanel(tk.Frame):
                 phrase = binary[24:header_point].replace(b"0", b"")
                 new_image = Image.frombytes('RGBA', (width, height), binary[header_point:])
                 self.cipher = CipherFactory.encrypt(name.decode(), phrase.decode(), new_image)
-                self.cipher.shift_amount = image_shift
+                if name == "Caesar":
+                    self.cipher.shift_amount = image_shift
                 self.cipher.encoded = True
                 self.cipher.decode()
         else:
