@@ -76,7 +76,7 @@ class CipherPanel(tk.Frame):
             self.caesar_button.config(relief="sunken")
             self.__current_cipher = self.caesar_button
         elif text == "test":
-            self.cipher_style = "Test"
+            self.cipher_style = "Caesar"
             self.__current_cipher.unbind('<Button>')
             self.__current_cipher.config(relief="raised")
             self.test_button.bind('<Button>', 'break')

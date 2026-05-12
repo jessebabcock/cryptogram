@@ -142,7 +142,7 @@ class CaesarCipher(Cipher):
         """Method for encoding.
 
         Args:
-            None
+            None AWDAWDAFGAGASG@#$@#^@
         """
         print(self.encoded)
         if self.encoded:
@@ -183,14 +183,16 @@ class CaesarCipher(Cipher):
 
     def save(self) -> str:
         # .encode() is byte format not cipher
-        # 37 byte header
+        # len(phrase) + 17 byte header
         if not self.encoded:
             self.encode(self.phrase)
+        phrase_padding = len(self.phrase)
         file_content = [self.name.encode().zfill(8),
                         self.image.height.to_bytes(4, 'little'),
                         self.image.width.to_bytes(4, 'little'),
                         self.shift_amount.to_bytes(1, 'little'),
-                        self.phrase.encode().zfill(20)]
+                        phrase_padding.to_bytes(4, 'little'),
+                        self.phrase.encode()]
         file_content.append(self.image.tobytes())
         with open("test.cryptogram", "wb") as file:
             file.write(b"".join(file_content))

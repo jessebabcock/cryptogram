@@ -62,6 +62,10 @@ class MainWindow(tk.Tk):
         self.decode_button.grid(**self._grid_dict(1, 1, "NE"))
         self.decode_button.bind('<Button>', 'break')
 
+        self.current_key = tk.StringVar()
+        self.current_key.trace("w", self.update_phrase_textbox)
+        self.cipher_bar.keyphrase.config(textvariable=self.current_key)
+
         self.__current_encryption_phrase = tk.Label(master=self, text="Current key: ", font=self.font)
         self.__current_encryption_phrase.grid(row=0, column=0, padx=10, sticky="NW", columnspan=self.columns)
 
@@ -94,7 +98,6 @@ class MainWindow(tk.Tk):
             self.image_panel.load_file()
         elif text == "save":
             self.image_panel.cipher.save()
-            self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))
         elif text == "encode":
             self.encoded_pressed()
             phrase = self.cipher_bar.keyphrase.get()
@@ -103,12 +106,12 @@ class MainWindow(tk.Tk):
             self.image_panel.cipher.encode(phrase)
             print(phrase)
             self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))
-            self.update_phrase_text()
+            self.update_encoded_text()
         elif text == "decode":
             self.decoded_pressed()
             self.image_panel.cipher.decode()
             self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))
-            self.update_phrase_text()
+            self.update_encoded_text()
         else:
             raise ValueError("Something bad happened in MainWindow")
     
@@ -123,9 +126,19 @@ class MainWindow(tk.Tk):
         self.encode_button.config(relief="raised")
         self.decode_button.bind('<Button>', 'break')
         self.decode_button.config(relief="sunken")
-    
-    def update_phrase_text(self):
+
+    def update_encoded_text(self):
         self.__current_encryption_phrase.config(text=f"Current key: {self.image_panel.cipher.phrase}")
+
+    def update_phrase_textbox(self, *args):
+        if self.image_panel.cipher.encoded:
+            self.image_panel.cipher.decode()
+            self.image_panel.cipher.phrase = self.current_key.get()
+            self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
+            self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))
+        else:
+            self.image_panel.cipher.phrase = self.current_key.get()
+        self.update_encoded_text()
 
     def load_image_panel(self) -> None:
         """Loads the main menu panel.

@@ -65,12 +65,14 @@ class ImagePanel(tk.Frame):
         if re.match('^.*\.cryptogram$', file_name):
             with open(file_name, "rb") as file:
                 binary = file.read()
-                header_point = 37
                 name = binary[0:8].replace(b"0", b"")
                 height = int.from_bytes(binary[8:12], 'little')
                 width = int.from_bytes(binary[12:16], 'little')
                 image_shift = int.from_bytes(binary[16:17], 'little')
-                phrase = binary[17:header_point].replace(b"0", b"")
+                phrase_ending = int.from_bytes(binary[17:21], 'little')
+                header_point = 21 + phrase_ending
+                phrase = binary[21:header_point].replace(b"0", b"")
+                print(phrase, phrase_ending)
                 new_image = Image.frombytes('RGBA', (width, height), binary[header_point:])
                 self.cipher = CipherFactory.encrypt(name.decode(), phrase.decode(), new_image)
                 self.cipher.shift_amount = image_shift
@@ -78,13 +80,15 @@ class ImagePanel(tk.Frame):
                 self.cipher.decode()
         else:
             new_image = Image.open(file_name)
-            # default to caesar with no phrase
-            if self.cipher is not None:
-                self.cipher.image = new_image
-            else:
-                self.cipher = CipherFactory.encrypt("Caesar", "", new_image)
-        self.__master.update_phrase_text()
+            # # default to caesar with no phrase
+            # if self.cipher is not None:
+            #     self.cipher.image = new_image
+            # else:
+            self.cipher = CipherFactory.encrypt(self.__master.cipher_bar.cipher_style, "", new_image)
+        self.__master.update_encoded_text()
+        self.__master.current_key.set(self.cipher.phrase)
         self.display_image(ImageTk.PhotoImage(self.cipher.image))
+        self.__master.decoded_pressed()
 
     def _grid_dict(self,
                    row: int,
