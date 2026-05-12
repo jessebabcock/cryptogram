@@ -102,9 +102,7 @@ class MainWindow(tk.Tk):
         elif text == "encode":
             self.encoded_pressed()
             self.check_cipher_change()
-            print(self.image_panel.cipher.encoded)
             self.image_panel.cipher.encode(self.cipher_bar.keyphrase.get())
-            print(self.image_panel.cipher.encoded)
             self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))
             self.update_encoded_text()
         elif text == "decode":
@@ -121,12 +119,14 @@ class MainWindow(tk.Tk):
                                                             self.cipher_bar.keyphrase.get(),
                                                             self.image_panel.get_image())
         elif self.image_panel.cipher.name != self.cipher_bar.cipher_style:
-            self.image_panel.cipher.decode()
+            prev_encoded = self.image_panel.cipher.encoded
+            if prev_encoded:
+                self.image_panel.cipher.decode()
             self.image_panel.cipher = CipherFactory.encrypt(self.cipher_bar.cipher_style,
                                                             self.image_panel.cipher.phrase,
                                                             self.image_panel.cipher.image)
-            self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
-            print(self.image_panel.cipher.phrase)
+            if prev_encoded:
+                self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
 
     def encoded_pressed(self):
         self.decode_button.unbind('<Button>')
@@ -145,7 +145,6 @@ class MainWindow(tk.Tk):
 
     def update_phrase_textbox(self, *args):
         if self.image_panel.cipher.encoded:
-            print("hit")
             self.image_panel.cipher.decode()
             if self.image_panel.cipher.name == "Caesar":
                 self.image_panel.cipher.shift_amount = self.cipher_bar.shift_amount_final.get()

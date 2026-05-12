@@ -87,6 +87,15 @@ class RotCipher(Cipher):
             int: Shift amount
         """
         return self.__shift_amount
+    
+    @shift_amount.setter
+    def shift_amount(self, value: int) -> None:
+        """shift_amount setter, does nothing.
+
+        Args:
+            None
+        """
+        return
 
     @property
     def encoded(self) -> bool:
