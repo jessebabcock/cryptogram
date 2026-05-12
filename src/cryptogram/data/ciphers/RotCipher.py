@@ -1,6 +1,7 @@
-"""Class for src.cryptogram.data.ciphers.Caesar
+"""Class for src.cryptogram.data.ciphers.RotCipher
 
-Caesar cipher that can change shift amount from input
+Rot13 cipher that works the same as Caesar but shift
+is always 13
 
 Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
@@ -15,13 +16,13 @@ import re
 import struct
 
 
-class CaesarCipher(Cipher):
-    """Caesar's Cipher encryption."""
+class RotCipher(Cipher):
+    """Rot13's Cipher encryption."""
 
     _instance = None
 
     def __init__(self, phrase: str, image, shift_amount: int) -> None:
-        self.__name: str = "Caesar"
+        self.__name: str = "Rot13"
         self.__shift_amount: int = shift_amount
         self.__phrase: str = phrase
         self.__image = image
@@ -74,28 +75,7 @@ class CaesarCipher(Cipher):
             None
         """
         self.__phrase = value
- 
-    @property
-    def shift_amount(self) -> str:
-        """shift_amount getter.
 
-        Args:
-            None
-
-        Returns:
-            int: Shift amount
-        """
-        return self.__shift_amount
-
-    @shift_amount.setter
-    def shift_amount(self, value: int) -> None:
-        """shift_amount setter.
-
-        Args:
-            None
-        """
-        self.__shift_amount = value
-    
     @property
     def encoded(self) -> bool:
         """Encoded bool getter.
@@ -173,11 +153,11 @@ class CaesarCipher(Cipher):
         image_shift = 0
         decoded_phrase: List[str] = list()
         for char in self.phrase:
-            new_char = ord(char) - self.shift_amount
+            new_char = ord(char) - self.__shift_amount
             if new_char < ord('!'):
                 new_char = ord('~') + new_char - ord('!') + 1
             char = chr(new_char)
-            image_shift += (new_char + self.shift_amount) * self.__seed_pad
+            image_shift += (new_char + self.__shift_amount) * self.__seed_pad
             decoded_phrase.append(char)
         self.phrase = "".join(decoded_phrase)
         self.image = CipherImage.flip_image(self.image, image_shift)
@@ -191,7 +171,7 @@ class CaesarCipher(Cipher):
         file_content = [self.name.encode().zfill(8),
                         self.image.height.to_bytes(4, 'little'),
                         self.image.width.to_bytes(4, 'little'),
-                        self.shift_amount.to_bytes(1, 'little'),
+                        self.__shift_amount.to_bytes(1, 'little'),
                         phrase_padding.to_bytes(4, 'little'),
                         self.phrase.encode()]
         file_content.append(self.image.tobytes())

@@ -8,6 +8,7 @@ Version: 0.1
 
 from src.cryptogram.data.Cipher import Cipher
 from src.cryptogram.data.ciphers.CaesarCipher import CaesarCipher
+from src.cryptogram.data.ciphers.RotCipher import RotCipher
 
 
 class CipherFactory():
@@ -16,6 +17,9 @@ class CipherFactory():
     def encrypt(cipher: str, phrase: str, image):
         cipher = cipher.lower()
         if cipher == "caesar":
-            shift_amount = 40
+            shift_amount = 0
             return CaesarCipher(phrase, image, shift_amount)
+        elif cipher == "rot13":
+            shift_amount = 13
+            return RotCipher(phrase, image, shift_amount)
             

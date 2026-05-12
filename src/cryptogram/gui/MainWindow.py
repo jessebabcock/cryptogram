@@ -47,8 +47,6 @@ class MainWindow(tk.Tk):
 
         self.current_key = tk.StringVar(value="")
         self.current_key.trace("w", self.update_phrase_textbox)
-        
-        
 
         self.encode_button: tk.Button = tk.Button(master=self, text="Encoded",
                                               command=lambda:
@@ -83,8 +81,6 @@ class MainWindow(tk.Tk):
         self.cipher_bar.grid(row=3, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
         self.cipher_bar.keyphrase.config(textvariable=self.current_key)
 
-        
-
         self.image_panel.load_file()
         self.deiconify()
 
@@ -104,11 +100,8 @@ class MainWindow(tk.Tk):
             self.image_panel.cipher.save()
         elif text == "encode":
             self.encoded_pressed()
-            phrase = self.cipher_bar.keyphrase.get()
-            if self.image_panel.cipher is None or self.image_panel.cipher.name != self.cipher_bar.cipher_style:
-                self.image_panel.cipher = CipherFactory.encrypt(self.cipher_bar.cipher_style, phrase, self.image_panel.get_image())
-            self.image_panel.cipher.encode(phrase)
-            print(phrase)
+            self.check_cipher_change()
+            self.image_panel.cipher.encode(self.cipher_bar.keyphrase.get())
             self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))
             self.update_encoded_text()
         elif text == "decode":
@@ -118,7 +111,14 @@ class MainWindow(tk.Tk):
             self.update_encoded_text()
         else:
             raise ValueError("Something bad happened in MainWindow")
-    
+
+    def check_cipher_change(self):
+        print(self.image_panel.cipher.name)
+        if self.image_panel.cipher is None or self.image_panel.cipher.name != self.cipher_bar.cipher_style:
+            self.image_panel.cipher = CipherFactory.encrypt(self.cipher_bar.cipher_style,
+                                                            self.cipher_bar.keyphrase.get(),
+                                                            self.image_panel.get_image())
+
     def encoded_pressed(self):
         self.decode_button.unbind('<Button>')
         self.decode_button.config(relief="raised")
