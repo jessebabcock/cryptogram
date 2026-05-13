@@ -1,7 +1,7 @@
-"""Class for src.cryptogram.data.ciphers.RotCipher.
+"""Class for src.cryptogram.data.ciphers.DiagnalCipher.
 
-Rot13 cipher that works the same as Caesar but shift
-is 13
+Diagnal cipher will take the phrase and reverse it
+XORing each character with the original phrase
 
 Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
@@ -14,8 +14,8 @@ from typing import List
 # mypy: ignore-errors
 
 
-class RotCipher(Cipher):
-    """Rot13's Cipher encryption."""
+class DiagnalCipher(Cipher):
+    """Checkerboard's Cipher encryption."""
 
     _instance = None
 
@@ -26,22 +26,24 @@ class RotCipher(Cipher):
             phrase: phrase to store
             image: image to store
         """
-        self.__name: str = "Rot13"
-        self.__shift_amount: int = 13
+        self.__name: str = "Diagnal"
+        self.__shift_amount: int = 0
         self.__phrase: str = phrase
         self.__image: Image = image
         self.__encoded: bool = False
+        for i, char in enumerate(phrase[::-1]):
+            self.__shift_amount += ord(phrase[i]) ^ ord(char) 
         self._seed_pad = (42 * 8191) + self.__shift_amount
 
-    def __new__(cls, phrase: str, image: Image) -> "RotCipher":
-        """Returns singleton instance for Rot13 Cipher.
+    def __new__(cls, phrase: str, image: Image) -> "DiagnalCipher":
+        """Returns singleton instance for Checkerboard Cipher.
 
         Args:
             None
 
         Returns:
-            RotCipher: Singleton instance
-            of RotCipher.
+            DiagnalCipher: Singleton instance
+            of DiagnalCipher.
         """
         if cls._instance is None:
             cls._instance = super().__new__(cls)
@@ -154,12 +156,13 @@ class RotCipher(Cipher):
         self.encoded = True
         image_shift = 0
         encoded_phrase: List[str] = list()
-        for char in phrase:
-            new_char = ord(char) + self.__shift_amount
-            image_shift += new_char * self._seed_pad
-            if new_char > ord('~'):
-                new_char = ord('!') + (new_char % ord('~')) - 1
-                # new_char = new_char - ord('~') + ord('!') - 1
+        placeholder = 20
+        self.shift_amount = 0
+        for i, char in enumerate(phrase[::-1]):
+            self.shift_amount += ord(phrase[i]) ^ ord(char)
+        for i, char in enumerate(phrase):
+            new_char = placeholder ^ ord(char)
+            image_shift += new_char * self._seed_pad * self.shift_amount
             char = chr(new_char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
@@ -176,13 +179,11 @@ class RotCipher(Cipher):
         self.encoded = False
         image_shift = 0
         decoded_phrase: List[str] = list()
-        for char in self.phrase:
-            new_char = ord(char) - self.__shift_amount
-            if new_char < ord('!'):
-                # new_char = ord('~') + new_char - ord('!') + 1
-                new_char = ord('~') - (abs(ord('!') - new_char) % ord('~')) + 1
+        placeholder = 20
+        for i, char in enumerate(self.phrase):
+            new_char = placeholder ^ ord(char)
+            image_shift += (new_char ^ placeholder) * self._seed_pad * self.shift_amount
             char = chr(new_char)
-            image_shift += (new_char + self.__shift_amount) * self._seed_pad
             decoded_phrase.append(char)
         self.phrase = "".join(decoded_phrase)
         self.image = CipherImage.flip_image(self.image, image_shift)

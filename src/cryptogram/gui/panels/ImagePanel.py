@@ -109,7 +109,7 @@ class ImagePanel(tk.Frame):
                 self.cipher = CipherFactory.encrypt(name.decode(),
                                                     phrase.decode(),
                                                     new_image)
-                if name == "Caesar":
+                if name != "Rot13":
                     self.cipher.shift_amount = image_shift
                 self.cipher.encoded = True
                 self.cipher.decode()

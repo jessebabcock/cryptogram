@@ -49,10 +49,15 @@ class CipherPanel(tk.Frame):
         self.caesar_button.bind('<Button>', 'break')
         self.__current_cipher = self.caesar_button
 
-        self.test_button: tk.Button = tk.Button(master=self, text="Rot13",
+        self.rot_button: tk.Button = tk.Button(master=self, text="Rot13",
                                                 command=lambda:
                                                 self.action_performed("rot13"))
-        self.test_button.grid(**self._grid_dict(1, 1, "NSEW"))
+        self.rot_button.grid(**self._grid_dict(1, 1, "NSEW"))
+
+        self.diagnal_button: tk.Button = tk.Button(master=self, text="Diagnal",
+                                                command=lambda:
+                                                self.action_performed("diagnal"))
+        self.diagnal_button.grid(**self._grid_dict(1, 2, "NSEW"))
 
         self.__keyphrase_label = tk.Label(master=self,
                                           text="Key/Phrase:",
@@ -86,9 +91,17 @@ class CipherPanel(tk.Frame):
             self.cipher_style = "Rot13"
             self.__current_cipher.unbind('<Button>')
             self.__current_cipher.config(relief="raised")
-            self.test_button.bind('<Button>', 'break')
-            self.test_button.config(relief="sunken")
-            self.__current_cipher = self.test_button
+            self.rot_button.bind('<Button>', 'break')
+            self.rot_button.config(relief="sunken")
+            self.__current_cipher = self.rot_button
+        elif text == "diagnal":
+            self.destroy_caesar_shift()
+            self.cipher_style = "Diagnal"
+            self.__current_cipher.unbind('<Button>')
+            self.__current_cipher.config(relief="raised")
+            self.diagnal_button.bind('<Button>', 'break')
+            self.diagnal_button.config(relief="sunken")
+            self.__current_cipher = self.diagnal_button
         self.__master.check_cipher_change()
         self.__master.update_phrase_textbox()
 

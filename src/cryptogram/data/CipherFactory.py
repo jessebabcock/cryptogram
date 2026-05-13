@@ -9,6 +9,7 @@ Version: 0.1
 from src.cryptogram.data.ciphers.CaesarCipher import CaesarCipher
 from src.cryptogram.data.Cipher import Cipher
 from src.cryptogram.data.ciphers.RotCipher import RotCipher
+from src.cryptogram.data.ciphers.DiagnalCipher import DiagnalCipher
 from PIL import Image
 # mypy: ignore-errors
 
@@ -35,5 +36,7 @@ class CipherFactory():
         elif cipher == "rot13":
             shift_amount = 13
             return RotCipher(phrase, image)
+        elif cipher == "diagnal":
+            return DiagnalCipher(phrase, image)
         else:
             raise ValueError("No cipher with that name")
