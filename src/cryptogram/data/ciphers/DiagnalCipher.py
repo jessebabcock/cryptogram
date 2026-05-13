@@ -154,7 +154,7 @@ class DiagnalCipher(Cipher):
         self.encoded = True
         image_shift = 0
         encoded_phrase: List[str] = list()
-        placeholder = 20
+        placeholder = 14
         self.shift_amount = 0
         for i, char in enumerate(phrase[::-1]):
             self.shift_amount = (
@@ -178,7 +178,7 @@ class DiagnalCipher(Cipher):
         self.encoded = False
         image_shift = 0
         decoded_phrase: List[str] = list()
-        placeholder = 20
+        placeholder = 14
         for char in self.phrase:
             new_char = placeholder ^ ord(char)
             image_shift += (

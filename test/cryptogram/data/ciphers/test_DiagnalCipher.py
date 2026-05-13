@@ -43,25 +43,25 @@ class TestDiagnalCipher:
         cipher = DiagnalCipher(old_phrase, image)
         cipher.encode(old_phrase)
         for i, char in enumerate(cipher.phrase):
-            assert ((ord(char) ^ ord(old_phrase[i])) == 20)
+            assert ((ord(char) ^ ord(old_phrase[i])) == 14)
 
     def test_diagnal_reencoding(self) -> None:
         """Test encode on already encoded cipher."""
         image = Image.new("RGBA", (1, 1), (255, 0, 0))
-        old_phrase = "a"
+        old_phrase = "u"
         cipher = DiagnalCipher(old_phrase, image)
         cipher.encoded = True
         cipher.encode(old_phrase)
-        assert (cipher.phrase == "u")
+        assert (cipher.phrase == "{")
 
     def test_diagnal_decode(self) -> None:
         """Test decode on general word."""
         image = Image.new("RGBA", (1, 1), (255, 0, 0))
-        old_phrase = "u"
+        old_phrase = "{"
         cipher = DiagnalCipher(old_phrase, image)
         cipher.encoded = True
         cipher.decode()
-        assert cipher.phrase == "a"
+        assert cipher.phrase == "u"
 
     def test_diagnal_decode_blocked(self) -> None:
         """Test decode on non-encoded cipher."""
