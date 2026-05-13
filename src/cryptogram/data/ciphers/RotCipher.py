@@ -31,7 +31,7 @@ class RotCipher(Cipher):
         self.__phrase: str = phrase
         self.__image: Image = image
         self.__encoded: bool = False
-        self._seed_pad = (42 * 8191) + self.__shift_amount
+        self._seed_pad: int = (42 * 8191) + self.__shift_amount
 
     def __new__(cls, phrase: str, image: Image) -> "RotCipher":
         """Returns singleton instance for Rot13 Cipher.
