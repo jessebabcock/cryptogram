@@ -31,8 +31,6 @@ class DiagnalCipher(Cipher):
         self.__phrase: str = phrase
         self.__image: Image = image
         self.__encoded: bool = False
-        for i, char in enumerate(phrase[::-1]):
-            self.__shift_amount += ord(phrase[i]) ^ ord(char) 
         self._seed_pad = (42 * 8191) + self.__shift_amount
 
     def __new__(cls, phrase: str, image: Image) -> "DiagnalCipher":
@@ -101,7 +99,7 @@ class DiagnalCipher(Cipher):
         Args:
             value: shift amount to set
         """
-        return
+        self.__shift_amount = value
 
     @property
     def encoded(self) -> bool:
@@ -159,13 +157,14 @@ class DiagnalCipher(Cipher):
         placeholder = 20
         self.shift_amount = 0
         for i, char in enumerate(phrase[::-1]):
-            self.shift_amount += ord(phrase[i]) ^ ord(char)
-        for i, char in enumerate(phrase):
+            self.shift_amount = self.shift_amount + (ord(phrase[i]) ^ ord(char))
+        for char in phrase:
             new_char = placeholder ^ ord(char)
             image_shift += new_char * self._seed_pad * self.shift_amount
             char = chr(new_char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
+        print("encode", image_shift)
         self.image = CipherImage.flip_image(self.image, image_shift)
 
     def decode(self) -> None:
@@ -180,12 +179,13 @@ class DiagnalCipher(Cipher):
         image_shift = 0
         decoded_phrase: List[str] = list()
         placeholder = 20
-        for i, char in enumerate(self.phrase):
+        for char in self.phrase:
             new_char = placeholder ^ ord(char)
-            image_shift += (new_char ^ placeholder) * self._seed_pad * self.shift_amount
+            image_shift += (placeholder ^ new_char) * self._seed_pad * self.shift_amount
             char = chr(new_char)
             decoded_phrase.append(char)
         self.phrase = "".join(decoded_phrase)
+        print("decode", image_shift, self.shift_amount)
         self.image = CipherImage.flip_image(self.image, image_shift)
 
     def save(self) -> None:
@@ -205,12 +205,13 @@ class DiagnalCipher(Cipher):
         """
         if not self.encoded:
             self.encode(self.phrase)
+        print(self.shift_amount)
         phrase_padding: int = len(self.phrase)
         file_content: List[bytes] = [
             self.name.encode().zfill(8),
             self.image.height.to_bytes(4, 'little'),
             self.image.width.to_bytes(4, 'little'),
-            self.__shift_amount.to_bytes(4, 'little'),
+            self.shift_amount.to_bytes(4, 'little'),
             phrase_padding.to_bytes(4, 'little'),
             self.phrase.encode()]
         file_content.append(self.image.tobytes())

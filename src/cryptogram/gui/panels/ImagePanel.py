@@ -95,17 +95,24 @@ class ImagePanel(tk.Frame):
         name = ""
         if re.match('^.*\.cryptogram$', file_name):
             with open(file_name, "rb") as file:
+                pointer = 0
                 binary = file.read()
-                name = binary[0:8].replace(b"0", b"")
-                height = int.from_bytes(binary[8:12], 'little')
-                width = int.from_bytes(binary[12:16], 'little')
-                image_shift = int.from_bytes(binary[16:20], 'little')
-                phrase_ending = int.from_bytes(binary[20:24], 'little')
-                header_point = 24 + phrase_ending
-                phrase = binary[24:header_point].replace(b"0", b"")
+                name = binary[pointer:pointer + 8].replace(b"0", b"")
+                print(name)
+                pointer += 8
+                height = int.from_bytes(binary[pointer:pointer + 4], 'little')
+                pointer += 4
+                width = int.from_bytes(binary[pointer:pointer + 4], 'little')
+                pointer += 4
+                image_shift = int.from_bytes(binary[pointer:pointer + 4], 'little')
+                pointer += 4
+                phrase_ending = int.from_bytes(binary[pointer:pointer + 4], 'little')
+                pointer += 4
+                phrase = binary[pointer:pointer + phrase_ending].replace(b"0", b"")
+                pointer += phrase_ending
                 new_image = Image.frombytes('RGBA',
                                             (width, height),
-                                            binary[header_point:])
+                                            binary[pointer:])
                 self.cipher = CipherFactory.encrypt(name.decode(),
                                                     phrase.decode(),
                                                     new_image)
