@@ -1,19 +1,17 @@
-"""Class for src.cryptogram.data.ciphers.RotCipher
+"""Class for src.cryptogram.data.ciphers.RotCipher.
 
 Rot13 cipher that works the same as Caesar but shift
-is 
+is 13
 
 Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
 """
 
-import multiprocessing
-from PIL import Image, ImageTk
+from PIL import Image
 from src.cryptogram.data.Cipher import Cipher
 from src.cryptogram.data.image.CipherImage import CipherImage
-from typing import List, Optional
-import re
-import struct
+from typing import List
+# mypy: ignore-errors
 
 
 class RotCipher(Cipher):
@@ -21,23 +19,29 @@ class RotCipher(Cipher):
 
     _instance = None
 
-    def __init__(self, phrase: str, image) -> None:
+    def __init__(self, phrase: str, image: Image) -> None:  # type: ignore
+        """Initialization.
+
+        Args:
+            phrase: phrase to store
+            image: image to store
+        """
         self.__name: str = "Rot13"
         self.__shift_amount: int = 13
         self.__phrase: str = phrase
-        self.__image = image
-        self.__encoded = False
-        self.__seed_pad = (42 * 8191) + self.__shift_amount
+        self.__image: Image = image
+        self.__encoded: bool = False
+        self._seed_pad = (42 * 8191) + self.__shift_amount
 
-    def __new__(cls, phrase: str, image) -> "CustomItemList":
-        """Returns singleton instance for custom item list.
+    def __new__(cls, phrase: str, image: Image) -> "RotCipher":
+        """Returns singleton instance for Rot13 Cipher.
 
         Args:
             None
 
         Returns:
-            CustomItemList: Singleton instance
-            of CustomItemList.
+            RotCipher: Singleton instance
+            of RotCipher.
         """
         if cls._instance is None:
             cls._instance = super().__new__(cls)
@@ -72,7 +76,7 @@ class RotCipher(Cipher):
         """Phrase setter.
 
         Args:
-            None
+            value: phrase to set
         """
         self.__phrase = value
 
@@ -87,13 +91,13 @@ class RotCipher(Cipher):
             int: Shift amount
         """
         return self.__shift_amount
-    
+
     @shift_amount.setter
     def shift_amount(self, value: int) -> None:
         """shift_amount setter, does nothing.
 
         Args:
-            None
+            value: shift amount to set
         """
         return
 
@@ -114,36 +118,36 @@ class RotCipher(Cipher):
         """Encoded bool getter.
 
         Args:
-            None
+            value: encoded bool to set
         """
         self.__encoded = value
-    
+
     @property
-    def image(self) -> str:
+    def image(self) -> Image:
         """Image getter.
 
         Args:
             None
 
         Returns:
-            str: Current state of the image
+            Image: Current state of the image
         """
         return self.__image
 
     @image.setter
-    def image(self, value: str) -> None:
+    def image(self, value: Image) -> None:
         """Image setter.
 
         Args:
-            None
+            value: image to set
         """
         self.__image = value
 
-    def encode(self, phrase) -> None:
+    def encode(self, phrase: str) -> None:
         """Method for encoding.
 
         Args:
-            None AWDAWDAFGAGASG@#$@#^@
+            phrase: new phrase to encode
         """
         if self.encoded:
             self.decode()
@@ -152,7 +156,7 @@ class RotCipher(Cipher):
         encoded_phrase: List[str] = list()
         for char in phrase:
             new_char = ord(char) + self.__shift_amount
-            image_shift += new_char * self.__seed_pad
+            image_shift += new_char * self._seed_pad
             if new_char > ord('~'):
                 new_char = new_char - ord('~') + ord('!') - 1
             char = chr(new_char)
@@ -176,23 +180,36 @@ class RotCipher(Cipher):
             if new_char < ord('!'):
                 new_char = ord('~') + new_char - ord('!') + 1
             char = chr(new_char)
-            image_shift += (new_char + self.__shift_amount) * self.__seed_pad
+            image_shift += (new_char + self.__shift_amount) * self._seed_pad
             decoded_phrase.append(char)
         self.phrase = "".join(decoded_phrase)
         self.image = CipherImage.flip_image(self.image, image_shift)
 
-    def save(self) -> str:
-        # .encode() is byte format not cipher
-        # len(phrase) + 17 byte header
+    def save(self) -> None:
+        """Method for saving to binary.
+
+        8 bytes for name
+        4 bytes for width
+        4 bytes for height
+        4 bytes for shift amount
+        4 bytes for length of phrase
+        rest of header is the phrase
+        ----------------------------
+        image data in bytes
+
+        Args:
+            None
+        """
         if not self.encoded:
             self.encode(self.phrase)
-        phrase_padding = len(self.phrase)
-        file_content = [self.name.encode().zfill(8),
-                        self.image.height.to_bytes(4, 'little'),
-                        self.image.width.to_bytes(4, 'little'),
-                        self.__shift_amount.to_bytes(4, 'little'),
-                        phrase_padding.to_bytes(4, 'little'),
-                        self.phrase.encode()]
+        phrase_padding: int = len(self.phrase)
+        file_content: List[bytes] = [
+            self.name.encode().zfill(8),
+            self.image.height.to_bytes(4, 'little'),
+            self.image.width.to_bytes(4, 'little'),
+            self.__shift_amount.to_bytes(4, 'little'),
+            phrase_padding.to_bytes(4, 'little'),
+            self.phrase.encode()]
         file_content.append(self.image.tobytes())
-        with open("test.cryptogram", "wb") as file:
+        with open("src/resources/test.cryptogram", "wb") as file:
             file.write(b"".join(file_content))

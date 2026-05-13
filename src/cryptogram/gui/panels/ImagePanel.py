@@ -6,7 +6,6 @@ Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
 """
 
-from tkinter.ttk import Scrollbar
 import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
@@ -14,7 +13,6 @@ from typing import Mapping, Dict, Union
 from src.cryptogram.data.Cipher import Cipher
 from src.cryptogram.data.CipherFactory import CipherFactory
 import re
-from io import BytesIO
 # mypy: ignore-errors
 
 
@@ -36,9 +34,15 @@ class ImagePanel(tk.Frame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
         self.__image = None
-        self.__image_display = tk.Label(master=self, text="Placeholder", borderwidth=3, relief="solid")
+        self.__image_display = tk.Label(master=self,
+                                        text="Placeholder",
+                                        borderwidth=3,
+                                        relief="solid")
         self.__image_display.grid(**self._grid_dict(0, 0, "NSEW"))
-        self.cipher: Cipher = CipherFactory.encrypt("Caesar", "", Image.new("RGBA", (1, 1), (255, 0, 0)))
+        self.cipher: Cipher = CipherFactory.encrypt(
+            "Caesar",
+            "",
+            Image.new("RGBA", (1, 1), (255, 0, 0)))
 
     def action_performed(self, text: str) -> None:
         """Actions when a button is pressed.
@@ -52,16 +56,42 @@ class ImagePanel(tk.Frame):
         """
         print(text)
 
-    def display_image(self, image):
+    def display_image(self, image: Image) -> None:
+        """Actions when a button is pressed.
+
+        Args:
+            image: Image to display
+
+        Returns:
+            None
+        """
         self.__image = image
         self.__image_display.config(image=image)
         self.__image_display.image = image
-    
-    def get_image(self):
+
+    def get_image(self) -> Image:
+        """Helper function to get current image.
+
+        Args:
+            None
+
+        Returns:
+            Image: Current image displayed
+        """
         return ImageTk.getimage(self.__image)
 
-    def load_file(self):
-        file_name = filedialog.askopenfilename(title='Open a file', initialdir='/home/codio/workspace/python/src/resources')
+    def load_file(self) -> None:
+        """Loads file from file explorer.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        file_name = filedialog.askopenfilename(
+            title='Open a file',
+            initialdir='src/resources')
         name = ""
         if re.match('^.*\.cryptogram$', file_name):
             with open(file_name, "rb") as file:
@@ -73,24 +103,29 @@ class ImagePanel(tk.Frame):
                 phrase_ending = int.from_bytes(binary[20:24], 'little')
                 header_point = 24 + phrase_ending
                 phrase = binary[24:header_point].replace(b"0", b"")
-                new_image = Image.frombytes('RGBA', (width, height), binary[header_point:])
-                self.cipher = CipherFactory.encrypt(name.decode(), phrase.decode(), new_image)
+                new_image = Image.frombytes('RGBA',
+                                            (width, height),
+                                            binary[header_point:])
+                self.cipher = CipherFactory.encrypt(name.decode(),
+                                                    phrase.decode(),
+                                                    new_image)
                 if name == "Caesar":
                     self.cipher.shift_amount = image_shift
                 self.cipher.encoded = True
                 self.cipher.decode()
         else:
             new_image = Image.open(file_name)
-            # # default to caesar with no phrase
-            # if self.cipher is not None:
-            #     self.cipher.image = new_image
-            # else:
-            self.cipher = CipherFactory.encrypt(self.__master.cipher_bar.cipher_style, "", new_image)
+            self.cipher = CipherFactory.encrypt(
+                self.__master.cipher_bar.cipher_style,
+                "",
+                new_image)
         self.__master.update_encoded_text()
         self.__master.current_key.set(self.cipher.phrase)
         if name != "":
-            self.__master.cipher_bar.action_performed(name.decode().lower())
-            self.__master.cipher_bar.shift_amount_final.set(self.cipher.shift_amount)
+            self.__master.cipher_bar.action_performed(
+                name.decode().lower())
+            self.__master.cipher_bar.shift_scroll.set(
+                self.cipher.shift_amount)
         self.display_image(ImageTk.PhotoImage(self.cipher.image))
         self.__master.decoded_pressed()
 

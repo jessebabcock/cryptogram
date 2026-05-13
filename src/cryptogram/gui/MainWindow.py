@@ -7,7 +7,7 @@ Version: 0.1
 """
 
 import tkinter as tk
-from PIL import Image, ImageTk
+from PIL import ImageTk
 from src.cryptogram.gui.panels.ImagePanel import ImagePanel
 from src.cryptogram.gui.panels.CipherPanel import CipherPanel
 from src.cryptogram.data.CipherFactory import CipherFactory
@@ -19,7 +19,7 @@ class MainWindow(tk.Tk):
     """Main window class."""
 
     def __init__(self) -> None:
-        """Initializes Menu GUI.
+        """Initializes Main window GUI.
 
         Args:
             None
@@ -43,30 +43,37 @@ class MainWindow(tk.Tk):
             self.grid_columnconfigure(i, weight=1)
 
         self.image_panel: tk.Widget = ImagePanel(self)
-        self.image_panel.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
+        self.image_panel.grid(row=0, column=0,
+                              padx=10, pady=10,
+                              sticky="NSEW", columnspan=self.columns)
 
-
-        self.encode_button: tk.Button = tk.Button(master=self, text="Encoded",
-                                              command=lambda:
-                                              self.action_performed("encode"),
-                                              font=self.font)
+        self.encode_button: tk.Button = tk.Button(
+            master=self, text="Encoded",
+            command=lambda:
+            self.action_performed("encode"),
+            font=self.font)
         self.encode_button.grid(**self._grid_dict(1, 2, "NW"))
 
-        self.decode_button: tk.Button = tk.Button(master=self, text="Decoded",
-                                              command=lambda:
-                                              self.action_performed("decode"),
-                                              font=self.font,
-                                              relief="sunken")
+        self.decode_button: tk.Button = tk.Button(
+            master=self, text="Decoded",
+            command=lambda:
+            self.action_performed("decode"),
+            font=self.font,
+            relief="sunken")
         self.decode_button.grid(**self._grid_dict(1, 1, "NE"))
         self.decode_button.bind('<Button>', 'break')
 
-        self.__current_encryption_phrase = tk.Label(master=self, text="Current key: ", font=self.font)
-        self.__current_encryption_phrase.grid(row=0, column=0, padx=10, sticky="NW", columnspan=self.columns)
+        self.__current_encryption_phrase = tk.Label(master=self,
+                                                    text="Current key: ",
+                                                    font=self.font)
+        self.__current_encryption_phrase.grid(row=0, column=0,
+                                              padx=10, sticky="NW",
+                                              columnspan=self.columns)
 
         load_button: tk.Button = tk.Button(master=self, text="Load Image",
-                                             command=lambda:
-                                             self.action_performed("load"),
-                                             font=self.font)
+                                           command=lambda:
+                                           self.action_performed("load"),
+                                           font=self.font)
         load_button.grid(**self._grid_dict(4, 0, "NEWS"), columnspan=2)
 
         save_button: tk.Button = tk.Button(master=self, text="Save Image",
@@ -77,9 +84,10 @@ class MainWindow(tk.Tk):
 
         self.current_key = tk.StringVar(value="")
         self.current_key.trace("w", self.update_phrase_textbox)
-        
+
         self.cipher_bar = CipherPanel(self)
-        self.cipher_bar.grid(row=3, column=0, padx=10, pady=10, sticky="NSEW", columnspan=self.columns)
+        self.cipher_bar.grid(row=3, column=0, padx=10, pady=10,
+                             sticky="NSEW", columnspan=self.columns)
         self.cipher_bar.keyphrase.config(textvariable=self.current_key)
 
         self.image_panel.load_file()
@@ -103,54 +111,100 @@ class MainWindow(tk.Tk):
             self.encoded_pressed()
             self.check_cipher_change()
             self.image_panel.cipher.encode(self.cipher_bar.keyphrase.get())
-            self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))
+            self.image_panel.display_image(
+                ImageTk.PhotoImage(self.image_panel.cipher.image))
             self.update_encoded_text()
         elif text == "decode":
             self.decoded_pressed()
             self.image_panel.cipher.decode()
-            self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))
+            self.image_panel.display_image(
+                ImageTk.PhotoImage(self.image_panel.cipher.image))
             self.update_encoded_text()
         else:
             raise ValueError("Something bad happened in MainWindow")
 
-    def check_cipher_change(self):
+    def check_cipher_change(self) -> None:
+        """Helper function for checking cipher on change.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         if self.image_panel.cipher is None:
-            self.image_panel.cipher = CipherFactory.encrypt(self.cipher_bar.cipher_style,
-                                                            self.cipher_bar.keyphrase.get(),
-                                                            self.image_panel.get_image())
+            self.image_panel.cipher = CipherFactory.encrypt(
+                self.cipher_bar.cipher_style,
+                self.cipher_bar.keyphrase.get(),
+                self.image_panel.get_image())
         elif self.image_panel.cipher.name != self.cipher_bar.cipher_style:
             prev_encoded = self.image_panel.cipher.encoded
             if prev_encoded:
                 self.image_panel.cipher.decode()
-            self.image_panel.cipher = CipherFactory.encrypt(self.cipher_bar.cipher_style,
-                                                            self.image_panel.cipher.phrase,
-                                                            self.image_panel.cipher.image)
+            self.image_panel.cipher = CipherFactory.encrypt(
+                self.cipher_bar.cipher_style,
+                self.image_panel.cipher.phrase,
+                self.image_panel.cipher.image)
             if prev_encoded:
                 self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
 
-    def encoded_pressed(self):
+    def encoded_pressed(self) -> None:
+        """Helper function for changing the buttons on encoding.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         self.decode_button.unbind('<Button>')
         self.decode_button.config(relief="raised")
         self.encode_button.bind('<Button>', 'break')
         self.encode_button.config(relief="sunken")
 
-    def decoded_pressed(self):
+    def decoded_pressed(self) -> None:
+        """Helper function for changing the buttons on decoding.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         self.encode_button.unbind('<Button>')
         self.encode_button.config(relief="raised")
         self.decode_button.bind('<Button>', 'break')
         self.decode_button.config(relief="sunken")
 
-    def update_encoded_text(self):
-        self.__current_encryption_phrase.config(text=f"Current key: {self.image_panel.cipher.phrase}")
+    def update_encoded_text(self) -> None:
+        """Helper function for updating current key display.
 
-    def update_phrase_textbox(self, *args):
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        self.__current_encryption_phrase.config(
+            text=f"Current key: {self.image_panel.cipher.phrase}")
+
+    def update_phrase_textbox(self, *args) -> None:
+        """Updates cipher display when phrasebox is typed in.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         if self.image_panel.cipher.encoded:
             self.image_panel.cipher.decode()
             if self.image_panel.cipher.name == "Caesar":
-                self.image_panel.cipher.shift_amount = self.cipher_bar.shift_amount_final.get()
+                self.image_panel.cipher.shift_amount = self.cipher_bar.shift_scroll.get()
             self.image_panel.cipher.phrase = self.current_key.get()
             self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
-            self.image_panel.display_image(ImageTk.PhotoImage(self.image_panel.cipher.image))
+            self.image_panel.display_image(
+                ImageTk.PhotoImage(self.image_panel.cipher.image))
         else:
             self.image_panel.cipher.phrase = self.current_key.get()
         self.update_encoded_text()
@@ -179,7 +233,8 @@ class MainWindow(tk.Tk):
         if self.__main is not None:
             self.__main.destroy()
         self.__main: tk.Widget = panel
-        self.__main.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW", columnspan=columnspan)
+        self.__main.grid(row=0, column=0, padx=10, pady=10,
+                         sticky="NSEW", columnspan=columnspan)
 
     def _grid_dict(self,
                    row: int,

@@ -25,7 +25,11 @@ class Cipher(ABC):
             bool or Any: Either returns bool or NotImplemented (Any type)
         """
         if cls is Cipher:
-            attrs: List[str] = ['name', 'previous_cipher', 'next_cipher', 'encode', 'decode']
+            attrs: List[str] = ['name',
+                                'phrase',
+                                'save',
+                                'encode',
+                                'decode']
             ret: bool = True
             for attr in attrs:
                 ret = (ret and
@@ -42,7 +46,7 @@ class Cipher(ABC):
             None
         """
         raise NotImplementedError
-    
+
     @property
     @abstractmethod
     def phrase(self) -> str:
@@ -54,16 +58,16 @@ class Cipher(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def encode(self, image, phrase) -> None:
+    def encode(self, phrase: str) -> None:
         """Abstract method for encoding.
 
         Args:
-            None
+            phrase: phrase to base the encoding on
         """
         raise NotImplementedError
 
     @abstractmethod
-    def decode(self, image, phrase) -> None:
+    def decode(self) -> None:
         """Abstract method for decoding.
 
         Args:
@@ -72,7 +76,7 @@ class Cipher(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def save(self) -> str:
+    def save(self) -> None:
         """Abstract method for decoding.
 
         Args:

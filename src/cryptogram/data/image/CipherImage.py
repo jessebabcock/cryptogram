@@ -1,30 +1,38 @@
-"""Class for src.cryptogram.data.image.Image
+"""Class for src.cryptogram.data.image.CipherImage.
 
-Class used for storing Image data with Pillow
-https://pillow.readthedocs.io/en/stable/index.html
-
-Image algorithms will be based xoring with a seed based
-on the phrase given, based on
-https://www.nature.com/articles/s41598-025-27142-2
+Image algorithm will be based xoring
+on the phrase given with a premade random field,
+based on https://www.nature.com/articles/s41598-025-27142-2
 
 Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
 """
 
-from typing import List, Optional
-from multiprocessing import sharedctypes
-from PIL import Image, ImageTk
+from PIL import Image
 import numpy as np
-import time
-
+# mypy: ignore-errors
 
 
 class CipherImage():
+    """Static class for image algo we apply."""
 
     @staticmethod
-    def flip_image(image, shift: int):
+    def flip_image(image: Image, shift: int) -> Image:
+        """Method for XORing random pixels with image.
+
+        Args:
+            image: Image to flip
+            shift: shift we apply
+
+        Returns:
+            Image: final result of the XOR
+        """
         image_array = np.array(image, dtype=np.uint8)
         rand = np.random.default_rng(seed=shift)
-        random_array = rand.integers(0, 256, (image.height, image.width, 4), dtype=np.uint8)
+        random_array = rand.integers(
+            0,
+            256,
+            (image.height, image.width, 4),
+            dtype=np.uint8)
         image_array ^= random_array
         return Image.fromarray(image_array)

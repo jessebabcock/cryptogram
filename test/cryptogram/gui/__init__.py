@@ -1,13 +1,9 @@
-"""__main__.py doc.
+"""test/cryptogram/gui Package.
 
-Runs main.
+This is the __init__ file for this package.
 
 Adding a docstring to please the flake gods
 
 Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
 """
-
-import sys
-from src.cryptogram.Main import Main
-Main.main(sys.argv)

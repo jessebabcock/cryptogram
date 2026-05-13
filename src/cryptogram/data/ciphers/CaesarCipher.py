@@ -1,4 +1,4 @@
-"""Class for src.cryptogram.data.ciphers.Caesar
+"""Class for src.cryptogram.data.ciphers.Caesar.
 
 Caesar cipher that can change shift amount from input
 
@@ -6,13 +6,11 @@ Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
 """
 
-import multiprocessing
-from PIL import Image, ImageTk
+from PIL import Image
 from src.cryptogram.data.Cipher import Cipher
 from src.cryptogram.data.image.CipherImage import CipherImage
-from typing import List, Optional
-import re
-import struct
+from typing import List
+# mypy: ignore-errors
 
 
 class CaesarCipher(Cipher):
@@ -20,23 +18,30 @@ class CaesarCipher(Cipher):
 
     _instance = None
 
-    def __init__(self, phrase: str, image, shift_amount: int) -> None:
+    def __init__(self, phrase: str, image: Image, shift_amount: int) -> None:
+        """Initialization.
+
+        Args:
+            phrase: phrase to store
+            image: image to store
+            shift_amount: shift amount to store
+        """
         self.__name: str = "Caesar"
         self.__shift_amount: int = shift_amount
         self.__phrase: str = phrase
-        self.__image = image
-        self.__encoded = False
-        self.__seed_pad = (42 * 8191) + shift_amount
+        self.__image: Image = image
+        self.__encoded: bool = False
+        self._seed_pad: int = (42 * 8191) + shift_amount
 
-    def __new__(cls, phrase: str, image, shift_amount: int) -> "CustomItemList":
-        """Returns singleton instance for custom item list.
+    def __new__(cls, phrase: str, image, shift_amount: int) -> "CaesarCipher":
+        """Returns singleton instance for Caesar Cipher.
 
         Args:
             None
 
         Returns:
-            CustomItemList: Singleton instance
-            of CustomItemList.
+            CaesarCipher: Singleton instance
+            of CaesarCipher.
         """
         if cls._instance is None:
             cls._instance = super().__new__(cls)
@@ -71,12 +76,12 @@ class CaesarCipher(Cipher):
         """Phrase setter.
 
         Args:
-            None
+            value: phrase to set
         """
         self.__phrase = value
 
     @property
-    def shift_amount(self) -> str:
+    def shift_amount(self) -> int:
         """shift_amount getter.
 
         Args:
@@ -92,10 +97,10 @@ class CaesarCipher(Cipher):
         """shift_amount setter.
 
         Args:
-            None
+            value: int to set shift amount to
         """
         self.__shift_amount = value
-    
+
     @property
     def encoded(self) -> bool:
         """Encoded bool getter.
@@ -113,36 +118,36 @@ class CaesarCipher(Cipher):
         """Encoded bool getter.
 
         Args:
-            None
+            value: phrase to set
         """
         self.__encoded = value
-    
+
     @property
-    def image(self) -> str:
+    def image(self) -> Image:
         """Image getter.
 
         Args:
             None
 
         Returns:
-            str: Current state of the image
+            Image: Current state of the image
         """
         return self.__image
 
     @image.setter
-    def image(self, value: str) -> None:
+    def image(self, value: Image) -> None:
         """Image setter.
 
         Args:
-            None
+            value: image value to set
         """
         self.__image = value
 
-    def encode(self, phrase) -> None:
+    def encode(self, phrase: str) -> None:
         """Method for encoding.
 
         Args:
-            None
+            phrase: phrase to base encoding on
         """
         if self.encoded:
             self.decode()
@@ -151,7 +156,7 @@ class CaesarCipher(Cipher):
         encoded_phrase: List[str] = list()
         for char in phrase:
             new_char = ord(char) + self.__shift_amount
-            image_shift += new_char * self.__seed_pad
+            image_shift += new_char * self._seed_pad
             if new_char > ord('~'):
                 # new_char = new_char - ord('~') + ord('!') - 1
                 new_char = ord('!') + (new_char % ord('~')) - 1
@@ -177,14 +182,26 @@ class CaesarCipher(Cipher):
                 # new_char = ord('~') + new_char - ord('!') + 1
                 new_char = ord('~') - (abs(ord('!') - new_char) % ord('~')) + 1
             char = chr(new_char)
-            image_shift += (new_char + self.shift_amount) * self.__seed_pad
+            image_shift += (new_char + self.shift_amount) * self._seed_pad
             decoded_phrase.append(char)
         self.phrase = "".join(decoded_phrase)
         self.image = CipherImage.flip_image(self.image, image_shift)
 
-    def save(self) -> str:
-        # .encode() is byte format not cipher
-        # len(phrase) + 17 byte header
+    def save(self) -> None:
+        """Method for saving to binary.
+
+        8 bytes for name
+        4 bytes for width
+        4 bytes for height
+        4 bytes for shift amount
+        4 bytes for length of phrase
+        rest of header is the phrase
+        ----------------------------
+        image data in bytes
+
+        Args:
+            None
+        """
         if not self.encoded:
             self.encode(self.phrase)
         phrase_padding = len(self.phrase)

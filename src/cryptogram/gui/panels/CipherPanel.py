@@ -1,6 +1,6 @@
-"""Class for src.cryptogram.gui.CypherPanel.
+"""Class for src.cryptogram.gui.CipherPanel.
 
-This will be a gui for Menu
+This will be a panel for cipher selection
 
 Author: Jesse Babcock jesseb98@ksu.edu
 Version: 0.1
@@ -12,10 +12,10 @@ from typing import Mapping, Dict, Union
 
 
 class CipherPanel(tk.Frame):
-    """Gui class for Cyphers."""
+    """Gui class for Cipher selection."""
 
     def __init__(self, master: tk.Widget) -> None:
-        """Initializes Menu GUI.
+        """Initializes Cipher selection Panel.
 
         Args:
             master: MainWindow we use to keep
@@ -38,24 +38,29 @@ class CipherPanel(tk.Frame):
 
         self.create_caesar_shift()
 
-        self.caesar_button: tk.Button = tk.Button(master=self, text="Caesar",
-                                             command=lambda:
-                                             self.action_performed("caesar"),
-                                             relief="sunken")
+        self.caesar_button: tk.Button = tk.Button(
+            master=self, text="Caesar",
+            command=lambda:
+            self.action_performed("caesar"),
+            relief="sunken")
+
         self.caesar_button.grid(**self._grid_dict(1, 0, "NSEW"))
         self.caesar_button.bind('<Button>', 'break')
         self.__current_cipher = self.caesar_button
 
         self.test_button: tk.Button = tk.Button(master=self, text="Rot13",
-                                             command=lambda:
-                                             self.action_performed("rot13"))
+                                                command=lambda:
+                                                self.action_performed("rot13"))
         self.test_button.grid(**self._grid_dict(1, 1, "NSEW"))
 
-        self.__keyphrase_label = tk.Label(master=self, text="Key/Phrase:", font=self.font)
+        self.__keyphrase_label = tk.Label(master=self,
+                                          text="Key/Phrase:",
+                                          font=self.font)
         self.__keyphrase_label.grid(**self._grid_dict(2, 0, "EW"))
 
         self.keyphrase = tk.Entry(master=self, font=self.font)
-        self.keyphrase.grid(**self._grid_dict(2, 2, "NSEW"), columnspan=self.columns - 1)
+        self.keyphrase.grid(**self._grid_dict(2, 2, "NSEW"),
+                            columnspan=self.columns - 1)
 
     def action_performed(self, text: str) -> None:
         """Actions when a button is pressed.
@@ -86,23 +91,50 @@ class CipherPanel(tk.Frame):
         self.__master.check_cipher_change()
         self.__master.update_phrase_textbox()
 
-    def create_caesar_shift(self):
-        self.__shift_amount_label = tk.Label(master=self, text="Shift: ", font=self.font)
+    def create_caesar_shift(self) -> None:
+        """Helper function for creating shift box for caesar cipher.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        self.__shift_amount_label = tk.Label(master=self,
+                                             text="Shift: ",
+                                             font=self.font)
         self.__shift_amount_label.grid(row=0, column=0, padx=10, sticky="W")
-        self.shift_amount_final = tk.IntVar(value=0)
-        self.shift_amount_final.trace('w', self.update_shift_amount)
+        self.shift_scroll = tk.IntVar(value=0)
+        self.shift_scroll.trace('w', self.update_shift_amount)
         self.shift_amount_spinbox = tk.Spinbox(self, from_=0, to=float("inf"),
-                                            textvariable=self.shift_amount_final,
-                                            justify=tk.RIGHT,
-                                            state='readonly')
+                                               textvariable=self.shift_scroll,
+                                               justify=tk.RIGHT,
+                                               state='readonly')
         self.shift_amount_spinbox.grid(**self._grid_dict(0, 0, "E"))
 
-    def destroy_caesar_shift(self):
+    def destroy_caesar_shift(self) -> None:
+        """Helper function for destroying shift box.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        print('hit')
         self.__shift_amount_label.destroy()
         self.shift_amount_spinbox.destroy()
 
-    def update_shift_amount(self, *args):
-        self.__master.image_panel.cipher.shift_amount = self.shift_amount_final.get()
+    def update_shift_amount(self, *args) -> None:
+        """Updates shift amount for caesar cipher.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        self.__master.image_panel.cipher.shift_amount = self.shift_scroll.get()
         self.__master.update_phrase_textbox()
 
     def _grid_dict(self,
