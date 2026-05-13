@@ -121,11 +121,10 @@ class ImagePanel(tk.Frame):
                 new_image)
         self.__master.update_encoded_text()
         self.__master.current_key.set(self.cipher.phrase)
-        if name != "":
-            self.__master.cipher_bar.action_performed(
-                name.decode().lower())
-            self.__master.cipher_bar.shift_scroll.set(
-                self.cipher.shift_amount)
+        self.__master.cipher_bar.action_performed(
+            self.cipher.name.lower())
+        self.__master.cipher_bar.shift_scroll.set(
+            self.cipher.shift_amount)
         self.display_image(ImageTk.PhotoImage(self.cipher.image))
         self.__master.decoded_pressed()
 

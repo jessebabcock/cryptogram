@@ -35,6 +35,7 @@ class CipherPanel(tk.Frame):
         self.grid_rowconfigure(2, weight=1)
         self.cipher_style = "Caesar"
         self.__current_cipher = None
+        self.__shift_amount_label = None
 
         self.create_caesar_shift()
 
@@ -100,13 +101,15 @@ class CipherPanel(tk.Frame):
         Returns:
             None
         """
+        if self.__shift_amount_label is not None:
+            self.destroy_caesar_shift()
         self.__shift_amount_label = tk.Label(master=self,
                                              text="Shift: ",
                                              font=self.font)
         self.__shift_amount_label.grid(row=0, column=0, padx=10, sticky="W")
         self.shift_scroll = tk.IntVar(value=0)
         self.shift_scroll.trace('w', self.update_shift_amount)
-        self.shift_amount_spinbox = tk.Spinbox(self, from_=0, to=float("inf"),
+        self.shift_amount_spinbox = tk.Spinbox(self, from_=0, to=126,
                                                textvariable=self.shift_scroll,
                                                justify=tk.RIGHT,
                                                state='readonly')
@@ -121,7 +124,6 @@ class CipherPanel(tk.Frame):
         Returns:
             None
         """
-        print('hit')
         self.__shift_amount_label.destroy()
         self.shift_amount_spinbox.destroy()
 
