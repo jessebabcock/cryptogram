@@ -157,14 +157,14 @@ class DiagnalCipher(Cipher):
         placeholder = 20
         self.shift_amount = 0
         for i, char in enumerate(phrase[::-1]):
-            self.shift_amount = self.shift_amount + (ord(phrase[i]) ^ ord(char))
+            self.shift_amount = (
+                self.shift_amount + (ord(phrase[i]) ^ ord(char)))
         for char in phrase:
             new_char = placeholder ^ ord(char)
             image_shift += new_char * self._seed_pad * self.shift_amount
             char = chr(new_char)
             encoded_phrase.append(char)
         self.phrase = "".join(encoded_phrase)
-        print("encode", image_shift)
         self.image = CipherImage.flip_image(self.image, image_shift)
 
     def decode(self) -> None:
@@ -181,11 +181,13 @@ class DiagnalCipher(Cipher):
         placeholder = 20
         for char in self.phrase:
             new_char = placeholder ^ ord(char)
-            image_shift += (placeholder ^ new_char) * self._seed_pad * self.shift_amount
+            image_shift += (
+                (placeholder ^ new_char) *
+                self._seed_pad *
+                self.shift_amount)
             char = chr(new_char)
             decoded_phrase.append(char)
         self.phrase = "".join(decoded_phrase)
-        print("decode", image_shift, self.shift_amount)
         self.image = CipherImage.flip_image(self.image, image_shift)
 
     def save(self) -> None:
@@ -205,7 +207,6 @@ class DiagnalCipher(Cipher):
         """
         if not self.encoded:
             self.encode(self.phrase)
-        print(self.shift_amount)
         phrase_padding: int = len(self.phrase)
         file_content: List[bytes] = [
             self.name.encode().zfill(8),

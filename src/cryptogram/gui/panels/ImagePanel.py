@@ -93,22 +93,28 @@ class ImagePanel(tk.Frame):
             title='Open a file',
             initialdir='src/resources')
         name = ""
-        if re.match('^.*\.cryptogram$', file_name):
+        # somehow \. is deprecated
+        file_type = re.escape('.cryptogram')
+        if re.match((f'^.*{file_type}$'), file_name):
             with open(file_name, "rb") as file:
                 pointer = 0
                 binary = file.read()
                 name = binary[pointer:pointer + 8].replace(b"0", b"")
-                print(name)
                 pointer += 8
-                height = int.from_bytes(binary[pointer:pointer + 4], 'little')
+                height = int.from_bytes(
+                    binary[pointer:pointer + 4], 'little')
                 pointer += 4
-                width = int.from_bytes(binary[pointer:pointer + 4], 'little')
+                width = int.from_bytes(
+                    binary[pointer:pointer + 4], 'little')
                 pointer += 4
-                image_shift = int.from_bytes(binary[pointer:pointer + 4], 'little')
+                image_shift = int.from_bytes(
+                    binary[pointer:pointer + 4], 'little')
                 pointer += 4
-                phrase_ending = int.from_bytes(binary[pointer:pointer + 4], 'little')
+                phrase_ending = int.from_bytes(
+                    binary[pointer:pointer + 4], 'little')
                 pointer += 4
-                phrase = binary[pointer:pointer + phrase_ending].replace(b"0", b"")
+                phrase = binary[pointer:pointer + phrase_ending].replace(
+                    b"0", b"")
                 pointer += phrase_ending
                 new_image = Image.frombytes('RGBA',
                                             (width, height),

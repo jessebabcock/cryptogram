@@ -50,13 +50,14 @@ class CipherPanel(tk.Frame):
         self.__current_cipher = self.caesar_button
 
         self.rot_button: tk.Button = tk.Button(master=self, text="Rot13",
-                                                command=lambda:
-                                                self.action_performed("rot13"))
+                                               command=lambda:
+                                               self.action_performed("rot13"))
         self.rot_button.grid(**self._grid_dict(1, 1, "NSEW"))
 
-        self.diagnal_button: tk.Button = tk.Button(master=self, text="Diagnal",
-                                                command=lambda:
-                                                self.action_performed("diagnal"))
+        self.diagnal_button: tk.Button = tk.Button(
+            master=self, text="Diagnal",
+            command=lambda:
+            self.action_performed("diagnal"))
         self.diagnal_button.grid(**self._grid_dict(1, 2, "NSEW"))
 
         self.__keyphrase_label = tk.Label(master=self,

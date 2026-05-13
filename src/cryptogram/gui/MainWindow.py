@@ -200,7 +200,8 @@ class MainWindow(tk.Tk):
         if self.image_panel.cipher.encoded:
             self.image_panel.cipher.decode()
             if self.image_panel.cipher.name == "Caesar":
-                self.image_panel.cipher.shift_amount = self.cipher_bar.shift_scroll.get()
+                self.image_panel.cipher.shift_amount = (
+                    self.cipher_bar.shift_scroll.get())
             self.image_panel.cipher.phrase = self.current_key.get()
             self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
             self.image_panel.display_image(
