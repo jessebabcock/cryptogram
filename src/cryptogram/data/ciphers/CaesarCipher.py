@@ -212,5 +212,5 @@ class CaesarCipher(Cipher):
                         phrase_padding.to_bytes(4, 'little'),
                         self.phrase.encode()]
         file_content.append(self.image.tobytes())
-        with open("test.cryptogram", "wb") as file:
+        with open("src/resources/test.cryptogram", "wb") as file:
             file.write(b"".join(file_content))
