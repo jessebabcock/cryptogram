@@ -109,7 +109,6 @@ class MainWindow(tk.Tk):
             self.image_panel.cipher.save()
         elif text == "encode":
             self.encoded_pressed()
-            self.check_cipher_change()
             self.image_panel.cipher.encode(self.cipher_bar.keyphrase.get())
             self.image_panel.display_image(
                 ImageTk.PhotoImage(self.image_panel.cipher.image))
@@ -147,6 +146,7 @@ class MainWindow(tk.Tk):
                 self.image_panel.cipher.image)
             if prev_encoded:
                 self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
+            
 
     def encoded_pressed(self) -> None:
         """Helper function for changing the buttons on encoding.
@@ -199,9 +199,6 @@ class MainWindow(tk.Tk):
         """
         if self.image_panel.cipher.encoded:
             self.image_panel.cipher.decode()
-            if self.image_panel.cipher.name == "Caesar":
-                self.image_panel.cipher.shift_amount = (
-                    self.cipher_bar.shift_scroll.get())
             self.image_panel.cipher.phrase = self.current_key.get()
             self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
             self.image_panel.display_image(

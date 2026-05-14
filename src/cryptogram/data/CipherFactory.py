@@ -31,7 +31,7 @@ class CipherFactory():
         """
         cipher = cipher.lower()
         if cipher == "caesar":
-            shift_amount = 0
+            shift_amount = 1
             return CaesarCipher(phrase, image, shift_amount)
         elif cipher == "rot13":
             shift_amount = 13

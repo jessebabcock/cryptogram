@@ -33,7 +33,7 @@ class CaesarCipher(Cipher):
         self.__encoded: bool = False
         self._seed_pad: int = (42 * 8191) + shift_amount
 
-    def __new__(cls, phrase: str, image, shift_amount: int) -> "CaesarCipher":
+    def __new__(cls, phrase: str, image: Image, shift_amount: int) -> "CaesarCipher":
         """Returns singleton instance for Caesar Cipher.
 
         Args:
@@ -172,6 +172,7 @@ class CaesarCipher(Cipher):
             None
         """
         if not self.encoded:
+            print('hit')
             return
         self.encoded = False
         image_shift = 0
