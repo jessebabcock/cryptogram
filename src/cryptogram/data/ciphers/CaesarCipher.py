@@ -187,7 +187,7 @@ class CaesarCipher(Cipher):
         self.phrase = "".join(decoded_phrase)
         self.image = CipherImage.flip_image(self.image, image_shift)
 
-    def save(self) -> None:
+    def save(self, name: str) -> None:
         """Method for saving to binary.
 
         8 bytes for name
@@ -212,5 +212,5 @@ class CaesarCipher(Cipher):
                         phrase_padding.to_bytes(4, 'little'),
                         self.phrase.encode()]
         file_content.append(self.image.tobytes())
-        with open("src/resources/test.cryptogram", "wb") as file:
+        with open(f"src/resources/{name}.cryptogram", "wb") as file:
             file.write(b"".join(file_content))

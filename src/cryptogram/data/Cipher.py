@@ -76,7 +76,7 @@ class Cipher(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def save(self) -> None:
+    def save(self, name: str) -> None:
         """Abstract method for decoding.
 
         Args:

@@ -11,6 +11,7 @@ from PIL import ImageTk
 from src.cryptogram.gui.panels.ImagePanel import ImagePanel
 from src.cryptogram.gui.panels.CipherPanel import CipherPanel
 from src.cryptogram.data.CipherFactory import CipherFactory
+from src.cryptogram.gui.dialog_windows.SelectionDialog import SelectionDialog
 from typing import Mapping, Dict, Union
 # mypy: ignore-errors
 
@@ -106,7 +107,9 @@ class MainWindow(tk.Tk):
         if text == "load":
             self.image_panel.load_file()
         elif text == "save":
-            self.image_panel.cipher.save()
+            filesave = SelectionDialog(self)
+            if filesave.result != "Cancel":
+                self.image_panel.cipher.save(filesave.filename_text)
         elif text == "encode":
             self.encoded_pressed()
             self.image_panel.cipher.encode(self.cipher_bar.keyphrase.get())

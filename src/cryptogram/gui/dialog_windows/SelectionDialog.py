@@ -20,10 +20,9 @@ from typing import List, Optional
 class SelectionDialog(tk.Toplevel):
     """Class for dialog box making."""
 
-    def __init__(self, master: tk.Widget, title: str = "Selection",
-                 message: str = "Select an option",
-                 options: List[str] = ["Yes", "No", "Cancel"],
-                 icon: str = None) -> None:
+    def __init__(self, master: tk.Widget, title: str = "File Save",
+                 message: str = "Save file as: ",
+                 options: List[str] = ["Cancel", "Save"]) -> None:
         """Initializes dialog box creation.
 
         Args:
@@ -43,20 +42,19 @@ class SelectionDialog(tk.Toplevel):
             self.title(title)
         offscreen_width = master.winfo_width() + 1
         offscreen_height = master.winfo_height() + 1
+        self.minsize(width=350, height=75)
+        self.maxsize(width=350, height=75)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
         self.geometry(f"0x0+{offscreen_width}+{offscreen_height}")
         self.__message = message
         self.__options = options
         self.result: Optional[str] = None
         self.__master = master
-        self.__icon = None
-        if icon:
-            self.__icon = tk.PhotoImage(file=f"resources/{icon}.png")
-            # resize image
-            self.__icon = self.__icon.subsample(20, 20)
 
-        body = tk.Frame(self)
-        self.initial_focus = self.body(body)
-        body.pack(padx=50 // len(options), pady=15 // len(options))
+        self.initial_focus = self.body(self)
 
         self.protocol("WM_DELETE_WINDOW", self.cancel)
         self._place_window()
@@ -71,21 +69,18 @@ class SelectionDialog(tk.Toplevel):
         Returns:
             None
         """
-        if self.__icon:
-            message = tk.Label(master=master,
-                               text=f" {self.__message}",
-                               image=self.__icon,
-                               compound=tk.LEFT)
-        else:
-            message = tk.Label(master=master, text=self.__message)
-        message.grid(row=0, column=0, columnspan=len(self.__options),
-                     padx=2, pady=2, sticky="EW")
+        message = tk.Label(master=master, text=self.__message)
+        message.grid(row=0, column=0,
+                     padx=2, pady=2, sticky="NW")
+        self.filename = tk.Entry(master=self)
+        self.filename.grid(row=0, column=1,
+                           padx=2, pady=2, sticky="NWE")
         i: int = 0
         for option in self.__options:
             button = tk.Button(master=master, text=option,
                                command=lambda x=option:  # type: ignore
                                self.action_performed(x))
-            button.grid(row=1, column=i, padx=2, pady=2, sticky="EW")
+            button.grid(row=1, column=i, padx=2, pady=2, sticky="SEW")
             i += 1
 
     def buttonbox(self) -> None:
@@ -139,4 +134,5 @@ class SelectionDialog(tk.Toplevel):
             None
         """
         self.result = text
+        self.filename_text = self.filename.get()
         self.destroy()
