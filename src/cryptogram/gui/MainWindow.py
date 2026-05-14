@@ -138,8 +138,7 @@ class MainWindow(tk.Tk):
                 self.image_panel.get_image())
         elif self.image_panel.cipher.name != self.cipher_bar.cipher_style:
             prev_encoded = self.image_panel.cipher.encoded
-            if prev_encoded:
-                self.image_panel.cipher.decode()
+            self.image_panel.cipher.decode()
             self.image_panel.cipher = CipherFactory.encrypt(
                 self.cipher_bar.cipher_style,
                 self.image_panel.cipher.phrase,

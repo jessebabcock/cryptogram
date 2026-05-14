@@ -172,7 +172,6 @@ class CaesarCipher(Cipher):
             None
         """
         if not self.encoded:
-            print('hit')
             return
         self.encoded = False
         image_shift = 0

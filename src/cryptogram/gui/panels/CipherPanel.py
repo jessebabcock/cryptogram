@@ -72,6 +72,8 @@ class CipherPanel(tk.Frame):
     def action_performed(self, text: str) -> None:
         """Actions when a button is pressed.
 
+        WE MUST CHANGE THE CIPHER BEFORE ANY BUTTONS ARE CREATED
+
         Args:
             text: String the box has
             that was clicked
@@ -80,31 +82,38 @@ class CipherPanel(tk.Frame):
             None
         """
         if text == "caesar":
-            self.create_caesar_shift()
             self.cipher_style = "Caesar"
+            self.__master.check_cipher_change()
+            self.__master.update_encoded_text()
             self.__current_cipher.unbind('<Button>')
             self.__current_cipher.config(relief="raised")
             self.caesar_button.bind('<Button>', 'break')
             self.caesar_button.config(relief="sunken")
             self.__current_cipher = self.caesar_button
+            self.create_caesar_shift()
         elif text == "rot13":
             self.destroy_caesar_shift()
             self.cipher_style = "Rot13"
+            self.__master.check_cipher_change()
+            self.__master.update_encoded_text()
             self.__current_cipher.unbind('<Button>')
             self.__current_cipher.config(relief="raised")
             self.rot_button.bind('<Button>', 'break')
             self.rot_button.config(relief="sunken")
             self.__current_cipher = self.rot_button
+            
         elif text == "diagnal":
             self.destroy_caesar_shift()
             self.cipher_style = "Diagnal"
+            self.__master.check_cipher_change()
+            self.__master.update_encoded_text()
             self.__current_cipher.unbind('<Button>')
             self.__current_cipher.config(relief="raised")
             self.diagnal_button.bind('<Button>', 'break')
             self.diagnal_button.config(relief="sunken")
             self.__current_cipher = self.diagnal_button
-        self.__master.check_cipher_change()
-        self.__master.update_phrase_textbox()
+            
+        
 
     def create_caesar_shift(self) -> None:
         """Helper function for creating shift box for caesar cipher.
