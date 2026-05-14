@@ -209,33 +209,6 @@ class MainWindow(tk.Tk):
             self.image_panel.cipher.phrase = self.current_key.get()
         self.update_encoded_text()
 
-    def load_image_panel(self) -> None:
-        """Loads the main menu panel.
-
-        Args:
-            None
-
-        Returns:
-            None
-        """
-        self.load_panel(ImagePanel(self), self.columns)
-
-    def load_panel(self, panel: tk.Widget, columnspan: int) -> None:
-        """Loads panel that button was clicked on.
-
-        Args:
-            panel: Panel to be loaded to the main
-            window
-
-        Returns:
-            None
-        """
-        if self.__main is not None:
-            self.__main.destroy()
-        self.__main: tk.Widget = panel
-        self.__main.grid(row=0, column=0, padx=10, pady=10,
-                         sticky="NSEW", columnspan=columnspan)
-
     def _grid_dict(self,
                    row: int,
                    column: int,

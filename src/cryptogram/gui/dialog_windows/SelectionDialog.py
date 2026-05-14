@@ -42,8 +42,7 @@ class SelectionDialog(tk.Toplevel):
             self.title(title)
         offscreen_width = master.winfo_width() + 1
         offscreen_height = master.winfo_height() + 1
-        self.minsize(width=350, height=75)
-        self.maxsize(width=350, height=75)
+        
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -53,11 +52,12 @@ class SelectionDialog(tk.Toplevel):
         self.__options = options
         self.result: Optional[str] = None
         self.__master = master
-
         self.initial_focus = self.body(self)
 
         self.protocol("WM_DELETE_WINDOW", self.cancel)
         self._place_window()
+        self.minsize(width=350, height=75)
+        self.maxsize(width=350, height=75)
         self.wait_window(self)
 
     def body(self, master) -> None:
