@@ -42,7 +42,6 @@ class SelectionDialog(tk.Toplevel):
             self.title(title)
         offscreen_width = master.winfo_width() + 1
         offscreen_height = master.winfo_height() + 1
-        
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)

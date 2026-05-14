@@ -43,7 +43,7 @@ class TestDiagnalCipher:
         cipher = DiagnalCipher(old_phrase, image)
         cipher.encode(old_phrase)
         for i, char in enumerate(cipher.phrase):
-            assert ((ord(char) ^ ord(old_phrase[i])) == 14)
+            assert ((ord(char) ^ ord(old_phrase[i])) == 42)
 
     def test_diagnal_reencoding(self) -> None:
         """Test encode on already encoded cipher."""
@@ -52,12 +52,12 @@ class TestDiagnalCipher:
         cipher = DiagnalCipher(old_phrase, image)
         cipher.encoded = True
         cipher.encode(old_phrase)
-        assert (cipher.phrase == "{")
+        assert (cipher.phrase == "_")
 
     def test_diagnal_decode(self) -> None:
         """Test decode on general word."""
         image = Image.new("RGBA", (1, 1), (255, 0, 0))
-        old_phrase = "{"
+        old_phrase = "_"
         cipher = DiagnalCipher(old_phrase, image)
         cipher.encoded = True
         cipher.decode()

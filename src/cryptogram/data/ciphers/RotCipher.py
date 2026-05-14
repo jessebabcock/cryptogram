@@ -200,7 +200,7 @@ class RotCipher(Cipher):
         image data in bytes
 
         Args:
-            None
+            name: Filename
         """
         if not self.encoded:
             self.encode(self.phrase)

@@ -148,7 +148,6 @@ class MainWindow(tk.Tk):
                 self.image_panel.cipher.image)
             if prev_encoded:
                 self.image_panel.cipher.encode(self.image_panel.cipher.phrase)
-            
 
     def encoded_pressed(self) -> None:
         """Helper function for changing the buttons on encoding.

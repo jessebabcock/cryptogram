@@ -101,7 +101,6 @@ class CipherPanel(tk.Frame):
             self.rot_button.bind('<Button>', 'break')
             self.rot_button.config(relief="sunken")
             self.__current_cipher = self.rot_button
-            
         elif text == "diagnal":
             self.destroy_caesar_shift()
             self.cipher_style = "Diagnal"
@@ -112,8 +111,6 @@ class CipherPanel(tk.Frame):
             self.diagnal_button.bind('<Button>', 'break')
             self.diagnal_button.config(relief="sunken")
             self.__current_cipher = self.diagnal_button
-            
-        
 
     def create_caesar_shift(self) -> None:
         """Helper function for creating shift box for caesar cipher.

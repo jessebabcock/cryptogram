@@ -80,6 +80,6 @@ class Cipher(ABC):
         """Abstract method for decoding.
 
         Args:
-            None
+            name: Filename
         """
         raise NotImplementedError
