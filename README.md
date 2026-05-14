@@ -4,7 +4,7 @@ Saved cryptogram files will be stored with an extension of ".cryptogram" so you 
 
 Main idea behind this style of encryption is from https://www.nature.com/articles/s41598-025-27142-2
 
-
+---
 
 To download it go to releases or clone it by doing
 ```
