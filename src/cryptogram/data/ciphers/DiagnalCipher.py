@@ -31,7 +31,7 @@ class DiagnalCipher(Cipher):
         self.__phrase: str = phrase
         self.__image: Image = image
         self.__encoded: bool = False
-        self._seed_pad = (42 * 8191)
+        self._seed_pad = (42 * 8191) + self.__shift_amount
 
     def __new__(cls, phrase: str, image: Image) -> "DiagnalCipher":
         """Returns singleton instance for Diagnal Cipher.

@@ -84,7 +84,7 @@ class CipherPanel(tk.Frame):
         if text == "caesar":
             self.cipher_style = "Caesar"
             self.__master.check_cipher_change()
-            self.__master.update_encoded_text()
+            self.__master.update_phrase_textbox()
             self.__current_cipher.unbind('<Button>')
             self.__current_cipher.config(relief="raised")
             self.caesar_button.bind('<Button>', 'break')
@@ -95,7 +95,7 @@ class CipherPanel(tk.Frame):
             self.destroy_caesar_shift()
             self.cipher_style = "Rot13"
             self.__master.check_cipher_change()
-            self.__master.update_encoded_text()
+            self.__master.update_phrase_textbox()
             self.__current_cipher.unbind('<Button>')
             self.__current_cipher.config(relief="raised")
             self.rot_button.bind('<Button>', 'break')
@@ -105,7 +105,7 @@ class CipherPanel(tk.Frame):
             self.destroy_caesar_shift()
             self.cipher_style = "Diagnal"
             self.__master.check_cipher_change()
-            self.__master.update_encoded_text()
+            self.__master.update_phrase_textbox()
             self.__current_cipher.unbind('<Button>')
             self.__current_cipher.config(relief="raised")
             self.diagnal_button.bind('<Button>', 'break')
