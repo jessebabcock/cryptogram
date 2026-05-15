@@ -10,7 +10,7 @@ Main idea behind this style of encryption is from https://www.nature.com/article
 
 To download it go to releases or clone it by doing
 ```
-git clone https://github.com/KSU-CC-410-FALL-2024/final-project-jessebabcock.git
+git clone https://github.com/jessebabcock/cryptogram.git
 ```
 
 type this command to run the program
